@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<rss xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0">
+	<channel>
+		<title>Words by Paul</title>
+		<link>https://paulmains.com/</link>
+		<description>Hello, these are the words of Paul :)</description>
+		<copyright>2020</copyright>
+		<pubDate>Thu, 16 Apr 2020 14:29:53 GMT</pubDate>
+		<lastBuildDate>Thu, 16 Apr 2020 14:29:53 GMT</lastBuildDate>
+		<item>
+			<title>First Post</title>
+			<link>https://paulmains.com/posts/first-post</link>
+			<description>&lt;p&gt;This is my first post!&lt;/p&gt;</description>
+			<guid>https://paulmains.com/posts/first-post</guid>
+			<pubDate>Fri, 01 Jan 2016 00:00:00 GMT</pubDate>
+			<content:encoded>&lt;p&gt;This is my first post!&lt;/p&gt;
+</content:encoded>
+		</item>
+	</channel>
+</rss>
