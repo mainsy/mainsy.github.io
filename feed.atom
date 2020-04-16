@@ -1,15 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-	<id>http://paulmains.com/</id>
+	<id>https://paulmains.com/</id>
 	<title>Words by Paul</title>
-	<link rel="self" href="http://paulmains.com/" />
+	<link rel="self" href="https://paulmains.com/" />
 	<rights>2020</rights>
-	<updated>2020-04-16T10:05:22Z</updated>
+	<updated>2020-04-16T11:29:53Z</updated>
 	<subtitle>Hello, these are the words of Paul :)</subtitle>
 	<entry>
-		<id>http://paulmains.com/posts/first-post</id>
+		<id>https://paulmains.com/posts/first-post</id>
 		<title>First Post</title>
-		<link href="http://paulmains.com/posts/first-post" />
+		<link href="https://paulmains.com/posts/first-post" />
 		<updated>2016-01-01T00:00:00Z</updated>
 		<content>&lt;p&gt;This is my first post!&lt;/p&gt;
 </content>
