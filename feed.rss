@@ -5,15 +5,86 @@
 		<link>https://paulmains.com/</link>
 		<description>Hello, these are the words of Paul :)</description>
 		<copyright>2020</copyright>
-		<pubDate>Fri, 17 Apr 2020 12:24:16 GMT</pubDate>
-		<lastBuildDate>Fri, 17 Apr 2020 12:24:16 GMT</lastBuildDate>
+		<pubDate>Fri, 17 Apr 2020 13:37:33 GMT</pubDate>
+		<lastBuildDate>Fri, 17 Apr 2020 13:37:33 GMT</lastBuildDate>
 		<item>
-			<title>First Post</title>
-			<link>https://paulmains.com/posts/first-post</link>
-			<description>&lt;p&gt;This is my first post!&lt;/p&gt;</description>
-			<guid>https://paulmains.com/posts/first-post</guid>
-			<pubDate>Fri, 01 Jan 2016 00:00:00 GMT</pubDate>
-			<content:encoded>&lt;p&gt;This is my first post!&lt;/p&gt;
+			<title>Slide or Push your menus and add some effects with CSS3</title>
+			<link>https://paulmains.com/posts/slide-or-push-your-menu</link>
+			<description>&lt;p&gt;When I'm navigating around the web, I find myself doing some odd things. If I'm looking at a website for the first time, I will put my cursor onto the right side of the browser window. I will drag that side in and watch in anticipation as to see whether the layout adapts to the smaller width. I'm constantly looking at what surprises a site will offer when looking at them from various devices. One of the things that I tend to add is a menu that grabs attention.&lt;/p&gt;</description>
+			<enclosure url="https://raw.githubusercontent.com/mainsy/cdn/master/photo/slide-menu.jpg" length="0" type="image" />
+			<guid>https://paulmains.com/posts/slide-or-push-your-menu</guid>
+			<pubDate>Sat, 06 Sep 2014 00:00:00 GMT</pubDate>
+			<content:encoded>&lt;p&gt;When I'm navigating around the web, I find myself doing some odd things. If I'm looking at a website for the first time, I will put my cursor onto the right side of the browser window. I will drag that side in and watch in anticipation as to see whether the layout adapts to the smaller width. I'm constantly looking at what surprises a site will offer when looking at them from various devices. One of the things that I tend to add is a menu that grabs attention.&lt;/p&gt;
+&lt;p&gt;I have put together a small demo on my Github, which can be seen at &lt;a href="https://github.com/mainsy/slide-menu"&gt;the slide menu git repository&lt;/a&gt;. Use the menu to navigate to the other 3 examples.&lt;/p&gt;
+&lt;h2 id="the-setup"&gt;The Setup&lt;/h2&gt;
+&lt;p&gt;To take advantage of some of techniques mentioned, the markup needs to adhere to a certain structure. We need to take advantage of elements identified as containers and wrappers. This is so we can more easily manipulate the DOM with both javascript and css. Here we can see the spine of the layout.&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-html"&gt;	&amp;lt;div id=&amp;quot;container&amp;quot;&amp;gt;
+		&amp;lt;nav&amp;gt;
+		&amp;lt;/nav&amp;gt;
+		&amp;lt;div id=&amp;quot;wrapper&amp;quot;&amp;gt;
+			&amp;lt;div class=&amp;quot;content&amp;quot;&amp;gt;
+				&amp;lt;div class=&amp;quot;inner-content&amp;quot;&amp;gt;
+				&amp;lt;/div&amp;gt;
+			&amp;lt;/div&amp;gt;
+		&amp;lt;/div&amp;gt;
+	&amp;lt;/div&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id="the-slide-menu"&gt;The Slide Menu&lt;/h2&gt;
+&lt;p&gt;The most basic approach to menu that expands to reveal it's content, is the slide menu. When accessed (presumably from a menu button) it will slide OVER the page content from an off canvas starting position. It's easier because you only need to apply the transition to the menu. You don't need to apply any transition to the content. This is demonstrated at this &lt;a href="https://rawgit.com/mainsy/slide-menu/master/basic-slider.html"&gt;basic slide menu example&lt;/a&gt;. I would typically only make this menu appear on tablet and mobile device resolutions. My media query to do display this would likely kick in at 768px depending on the layout.&lt;/p&gt;
+&lt;p&gt;The css that makes this happen is the transform translate3d function with a bit of help from the transition function.&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-css"&gt;	-webkit-transition: ease-in-out 0.25s;
+	transition: ease-in-out 0.25s;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class="language-css"&gt;	-webkit-transform: translate3d(-100%, 0, 0);
+	transform: translate3d(-100%, 0, 0);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;When the menu is triggered we set it back to...&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-css"&gt;	-webkit-transform: translate3d(0, 0, 0);
+	transform: translate3d(0, 0, 0);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id="the-push-menu"&gt;The Push Menu&lt;/h2&gt;
+&lt;p&gt;Building on top of the slide menu we can add the effect of pushing the content off the canvas. No changes need to occur to the menu, that will slide in and out as before. The only difference is that the wrapper needs to be transformed. This is displayed here in the &lt;a href="https://rawgit.com/mainsy/slide-menu/master/push-slider.html"&gt;push slide menu example&lt;/a&gt;. Adding this style to the wrapper when the menu is opened would do the trick (depending on the size of the menu).&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-css"&gt;	-webkit-transform: translate3d(260px, 0, 0);
+	transform: translate3d(260px, 0, 0);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id="the-push-menu-with-scale-effect"&gt;The Push Menu With Scale Effect&lt;/h2&gt;
+&lt;p&gt;Now that the content is being transformed as well as the menu. We can add some interesting effects when the menu is triggered. The scale effect can be seen at this &lt;a href="https://rawgit.com/mainsy/slide-menu/master/scale-slider.html"&gt;push slide menu with scale effect example&lt;/a&gt;. Something else needs to be added to achieve that particular effect. The transform style needs to be utilised to allow the z-axis manipulations to be observed.&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-css"&gt;	-webkit-transform-style: preserve-3d;
+	transform-style: preserve-3d;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Once that is added the transformation be altered to sink into the background, like so.&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-css"&gt;	-webkit-transform: translate3d(100px, 0, -800px);
+	transform: translate3d(100px, 0, -800px);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id="the-push-menu-with-scale-rotate-effect"&gt;The Push Menu With Scale &amp;amp; Rotate Effect&lt;/h2&gt;
+&lt;p&gt;My personal preference is to tilt the content also. This is demonstrated at this &lt;a href="https://rawgit.com/mainsy/slide-menu/master/rotate-slider.html"&gt;push slide menu with scale and rotate effect example&lt;/a&gt;. To do this all that is needed is to add a rotation to the transform.&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-css"&gt;	-webkit-transform: translate3d(100px, 0, -200px) rotateY(-35deg);
+	transform: translate3d(100px, 0, -200px) rotateY(-35deg);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;And that ladies and gentlemen is how you do that.&lt;/p&gt;
+</content:encoded>
+		</item>
+		<item>
+			<title>It's my first blog post today... now what the hell do I write about?</title>
+			<link>https://paulmains.com/posts/its-my-first-blog-post</link>
+			<description>&lt;p&gt;This is my first blog post. A dawn of a new day (like that massive picture above... yeah i like big pictures). This is where I figure out what I'm going to do with this blog.&lt;/p&gt;</description>
+			<enclosure url="https://raw.githubusercontent.com/mainsy/cdn/master/photo/sunlight_landscape.jpg" length="0" type="image" />
+			<guid>https://paulmains.com/posts/its-my-first-blog-post</guid>
+			<pubDate>Mon, 11 Aug 2014 00:00:00 GMT</pubDate>
+			<content:encoded>&lt;p&gt;This is my first blog post. A dawn of a new day (like that massive picture above... yeah i like big pictures). This is where I figure out what I'm going to do with this blog.&lt;/p&gt;
+&lt;h3 id="why-am-i-blogging"&gt;Why Am I blogging?&lt;/h3&gt;
+&lt;p&gt;Because my day just isn't full enough. But most of all I want to be a better thinker, a better rationalist, a better learner. All in all I want to be better at what I do, whether that be working or living.&lt;/p&gt;
+&lt;h3 id="what-am-i-blogging-about"&gt;What am I blogging about?&lt;/h3&gt;
+&lt;p&gt;I write in C# and build websites in ASP.NET MVC so i guess it's likely my leaning will be towards Microsoft frameworks and technologies. However I do wish to try new things. So Basically what ever takes my fancy at the time. These could be developer peripheral activities like project management, source control, design and hosting. I might even pick something completely new to me and blog about my experiences from beginner to intermediate.&lt;/p&gt;
+&lt;h3 id="i-promise-to-try"&gt;I promise to try:&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Not to rant&lt;/li&gt;
+&lt;li&gt;To keep things succinct&lt;/li&gt;
+&lt;li&gt;To reign in my sarcasm&lt;/li&gt;
+&lt;li&gt;Not to swear&lt;/li&gt;
+&lt;li&gt;New things&lt;/li&gt;
+&lt;li&gt;To blog at least once a month (week preferably)&lt;/li&gt;
+&lt;/ul&gt;
 </content:encoded>
 		</item>
 	</channel>
