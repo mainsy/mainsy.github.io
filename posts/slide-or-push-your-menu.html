@@ -1,106 +1,4 @@
-﻿
-<!DOCTYPE html>
-<!--
-	Phantom by HTML5 UP
-	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
--->
-<html lang="en">
-
-	<head>
-		<title>Words by Paul - Slide or Push your menus and add some effects with CSS3</title>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1" />		
-        <link href="/assets/css/highlight.css" rel="stylesheet">
-		<!--[if lte IE 8]><script src="/assets/js/ie/html5shiv.js"></script><![endif]-->
-		<link rel="stylesheet" href="/assets/css/main.css" />
-		<!--[if lte IE 9]><link rel="stylesheet" href="/assets/css/ie9.css" /><![endif]-->
-		<!--[if lte IE 8]><link rel="stylesheet" href="/assets/css/ie8.css" /><![endif]-->
-        <link href="/assets/css/override.css" rel="stylesheet" />
-        <link href="/assets/css/custom.css" rel="stylesheet" />
-		<meta name="description" content="Hello, these are the words of a Full Stack Web Developer." />
-		<link type="application/rss+xml" rel="alternate" title="Words by Paul" href="/feed.rss" />
-				<link type="application/atom+xml" rel="alternate" title="Words by Paul" href="/feed.atom" />
-		<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
-		<link rel="icon" href="/favicon.ico" type="image/x-icon">
-		<meta name="application-name" content="Words by Paul" />
-		<meta name="msapplication-tooltip" content="Words by Paul" />
-		<meta name="msapplication-starturl" content="/" />
-		<meta property="og:title" content="Words by Paul - Slide or Push your menus and add some effects with CSS3" /> 
-		<meta property="og:type" content="website" />
-		<meta property="og:url" content="https://paulmains.com/posts/slide-or-push-your-menu" />
-		<!-- TODO: More social graph meta tags -->
-
-        <script src="/assets/js/highlight.pack.js"></script>   
-		<script src="https://kit.fontawesome.com/12b6ba9080.js" crossorigin="anonymous"></script>
-        
-
-	</head>
-
-	<body>
-		<!-- Wrapper -->
-		<div id="wrapper">
-
-			<!-- Header -->
-			<header id="header">
-				<div class="inner">
-
-					<!-- Logo -->
-					<a href="/" class="logo">
-						<span class="title">Words by Paul</span>
-					</a>
-					<a href="https://github.com/mainsy" title="mainsy github" class="social-link"><i class="social-link fab fa-github fa-lg"></i></a>
-                    <a href="https://www.instagram.com/paulmains/" title="paulmains instagram" class="social-link"><i class="social-link fab fa-instagram fa-lg""></i></a>
-                    <a href="https://twitter.com/paulmains" title="paulmains twitter" class="social-link"><i class="social-link fab fa-twitter fa-lg""></i></a>
-                    <a href="https://www.linkedin.com/in/paulmains/" title="paulmains linkedin" class="social-link"><i class="social-link fab fa-linkedin-in fa-lg""></i></a>
-					<!-- Nav -->
-					<nav>
-						<ul>
-							<li><a href="#menu">Menu</a></li>
-						</ul>
-					</nav>
-
-				</div>
-			</header>
-
-			<!-- Menu -->
-			<nav id="menu">
-				<h2>Menu</h2>
-				<ul>
-					        <li><a href="/posts">Archive</a></li>
-        <li><a href="/tags">Tags</a></li>
-        <li><a href="/about">About Paul</a></li>
-
-				</ul>
-				<a href="https://github.com/mainsy" title="mainsy github" class="social-link-alt"><i class="fab fa-github fa-2x"></i></a>
-				<a href="https://www.instagram.com/paulmains/" title="paulmains instagram" class="social-link-alt"><i class="fab fa-instagram fa-2x"></i></a>
-				<a href="https://twitter.com/paulmains" title="paulmains twitter" class="social-link-alt"><i class="fab fa-twitter fa-2x"></i></a>
-				<a href="https://www.linkedin.com/in/paulmains/" title="paulmains linkedin" class="social-link-alt"><i class="fab fa-linkedin-in fa-2x"></i></a>
-			</nav>
-
-			<!-- Main -->
-			<div id="main">
-				<div class="inner">
-
-    
-<header>
-    <h1>Slide or Push your menus and add some effects with CSS3</h1>
-            <p><em>Published on 06 September 2014</em></p>
-            <ul class="actions small">
-                    <li><a role="button" href="/tags/Frontend" class="button small">Frontend</a></li>
-        </ul>     
-</header>
-
-						<span class="image main"><img src="https://raw.githubusercontent.com/mainsy/cdn/master/photo/slide-menu.jpg" alt="Hero image" /></span>
-					
-					<div id="content">
-						
-
-<p>When I'm navigating around the web, I find myself doing some odd things. If I'm looking at a website for the first time, I will put my cursor onto the right side of the browser window. I will drag that side in and watch in anticipation as to see whether the layout adapts to the smaller width. I'm constantly looking at what surprises a site will offer when looking at them from various devices. One of the things that I tend to add is a menu that grabs attention.</p>
-<p>I have put together a small demo on my Github, which can be seen at <a href="https://github.com/mainsy/slide-menu">the slide menu git repository</a>. Use the menu to navigate to the other 3 examples.</p>
-<h2 id="the-setup">The Setup</h2>
-<p>To take advantage of some of techniques mentioned, the markup needs to adhere to a certain structure. We need to take advantage of elements identified as containers and wrappers. This is so we can more easily manipulate the DOM with both javascript and css. Here we can see the spine of the layout.</p>
-<pre><code class="language-html">	&lt;div id=&quot;container&quot;&gt;
+<!DOCTYPE html><html lang=en><head><title>Words by Paul - Slide or Push your menus and add some effects with CSS3</title><meta charset=utf-8><meta name=viewport content="width=device-width, initial-scale=1"><link href=/assets/css/highlight.css rel=stylesheet><!--[if lte IE 8]><script src=/assets/js/ie/html5shiv.js></script><![endif]--><link rel=stylesheet href=/assets/css/main.css><!--[if lte IE 9]><link rel=stylesheet href=/assets/css/ie9.css><![endif]--> <!--[if lte IE 8]><link rel=stylesheet href=/assets/css/ie8.css><![endif]--><link href=/assets/css/override.css rel=stylesheet><link href=/assets/css/custom.css rel=stylesheet><meta name=description content="Hello, these are the words of a Full Stack Web Developer."><link type=application/rss+xml rel=alternate title="Words by Paul" href=/feed.rss><link type=application/atom+xml rel=alternate title="Words by Paul" href=/feed.atom><link rel="shortcut icon" href=/favicon.ico type=image/x-icon><link rel=icon href=/favicon.ico type=image/x-icon><meta name=application-name content="Words by Paul"><meta name=msapplication-tooltip content="Words by Paul"><meta name=msapplication-starturl content="/"><meta property=og:title content="Words by Paul - Slide or Push your menus and add some effects with CSS3"><meta property=og:type content=website><meta property=og:url content=https://paulmains.com/posts/slide-or-push-your-menu><script src=/assets/js/highlight.pack.js></script><script src=https://kit.fontawesome.com/12b6ba9080.js crossorigin=anonymous></script><body><div id=wrapper><header id=header><div class=inner><a href="/" class=logo> <span class=title>Words by Paul</span> </a> <a href=https://github.com/mainsy title="mainsy github" class=social-link><i class="social-link fab fa-github fa-lg"></i></a> <a href="https://www.instagram.com/paulmains/" title="paulmains instagram" class=social-link><i class="social-link fab fa-instagram fa-lg"></i></a> <a href=https://twitter.com/paulmains title="paulmains twitter" class=social-link><i class="social-link fab fa-twitter fa-lg"></i></a> <a href="https://www.linkedin.com/in/paulmains/" title="paulmains linkedin" class=social-link><i class="social-link fab fa-linkedin-in fa-lg"></i></a>  <nav><ul><li><a href=#menu>Menu</a></ul></nav></div></header><nav id=menu><h2>Menu</h2><ul><li><a href=/posts>Archive</a><li><a href=/tags>Tags</a><li><a href=/about>About Paul</a></ul><a href=https://github.com/mainsy title="mainsy github" class=social-link-alt><i class="fab fa-github fa-2x"></i></a> <a href="https://www.instagram.com/paulmains/" title="paulmains instagram" class=social-link-alt><i class="fab fa-instagram fa-2x"></i></a> <a href=https://twitter.com/paulmains title="paulmains twitter" class=social-link-alt><i class="fab fa-twitter fa-2x"></i></a> <a href="https://www.linkedin.com/in/paulmains/" title="paulmains linkedin" class=social-link-alt><i class="fab fa-linkedin-in fa-2x"></i></a> </nav><div id=main><div class=inner><header><h1>Slide or Push your menus and add some effects with CSS3</h1><p>You can apply css to make your menus slide, push, scale out, skew it&#x27;s axis. Here are some transforms which can accomplish that.<p><em>Published on 06 September 2014</em><ul class="actions small"><li><a role=button href=/tags/Frontend class="button small">Frontend</a></ul></header><span class="image main"><img src=https://raw.githubusercontent.com/mainsy/cdn/master/photo/slide-menu.jpg alt="Hero image"></span><div id=content><p>When I'm navigating around the web, I find myself doing some odd things. If I'm looking at a website for the first time, I will put my cursor onto the right side of the browser window. I will drag that side in and watch in anticipation as to see whether the layout adapts to the smaller width. I'm constantly looking at what surprises a site will offer when looking at them from various devices. One of the things that I tend to add is a menu that grabs attention.<p>I have put together a small demo on my Github, which can be seen at <a href=https://github.com/mainsy/slide-menu>the slide menu git repository</a>. Use the menu to navigate to the other 3 examples.<h2 id=the-setup>The Setup</h2><p>To take advantage of some of techniques mentioned, the markup needs to adhere to a certain structure. We need to take advantage of elements identified as containers and wrappers. This is so we can more easily manipulate the DOM with both javascript and css. Here we can see the spine of the layout.<pre><code class=language-html>	&lt;div id=&quot;container&quot;&gt;
 		&lt;nav&gt;
 		&lt;/nav&gt;
 		&lt;div id=&quot;wrapper&quot;&gt;
@@ -110,83 +8,18 @@
 			&lt;/div&gt;
 		&lt;/div&gt;
 	&lt;/div&gt;
-</code></pre>
-<h2 id="the-slide-menu">The Slide Menu</h2>
-<p>The most basic approach to menu that expands to reveal it's content, is the slide menu. When accessed (presumably from a menu button) it will slide OVER the page content from an off canvas starting position. It's easier because you only need to apply the transition to the menu. You don't need to apply any transition to the content. This is demonstrated at this <a href="https://rawgit.com/mainsy/slide-menu/master/basic-slider.html">basic slide menu example</a>. I would typically only make this menu appear on tablet and mobile device resolutions. My media query to do display this would likely kick in at 768px depending on the layout.</p>
-<p>The css that makes this happen is the transform translate3d function with a bit of help from the transition function.</p>
-<pre><code class="language-css">	-webkit-transition: ease-in-out 0.25s;
+</code></pre><h2 id=the-slide-menu>The Slide Menu</h2><p>The most basic approach to menu that expands to reveal it's content, is the slide menu. When accessed (presumably from a menu button) it will slide OVER the page content from an off canvas starting position. It's easier because you only need to apply the transition to the menu. You don't need to apply any transition to the content. This is demonstrated at this <a href=https://rawgit.com/mainsy/slide-menu/master/basic-slider.html>basic slide menu example</a>. I would typically only make this menu appear on tablet and mobile device resolutions. My media query to do display this would likely kick in at 768px depending on the layout.<p>The css that makes this happen is the transform translate3d function with a bit of help from the transition function.<pre><code class=language-css>	-webkit-transition: ease-in-out 0.25s;
 	transition: ease-in-out 0.25s;
-</code></pre>
-<pre><code class="language-css">	-webkit-transform: translate3d(-100%, 0, 0);
+</code></pre><pre><code class=language-css>	-webkit-transform: translate3d(-100%, 0, 0);
 	transform: translate3d(-100%, 0, 0);
-</code></pre>
-<p>When the menu is triggered we set it back to...</p>
-<pre><code class="language-css">	-webkit-transform: translate3d(0, 0, 0);
+</code></pre><p>When the menu is triggered we set it back to...<pre><code class=language-css>	-webkit-transform: translate3d(0, 0, 0);
 	transform: translate3d(0, 0, 0);
-</code></pre>
-<h2 id="the-push-menu">The Push Menu</h2>
-<p>Building on top of the slide menu we can add the effect of pushing the content off the canvas. No changes need to occur to the menu, that will slide in and out as before. The only difference is that the wrapper needs to be transformed. This is displayed here in the <a href="https://rawgit.com/mainsy/slide-menu/master/push-slider.html">push slide menu example</a>. Adding this style to the wrapper when the menu is opened would do the trick (depending on the size of the menu).</p>
-<pre><code class="language-css">	-webkit-transform: translate3d(260px, 0, 0);
+</code></pre><h2 id=the-push-menu>The Push Menu</h2><p>Building on top of the slide menu we can add the effect of pushing the content off the canvas. No changes need to occur to the menu, that will slide in and out as before. The only difference is that the wrapper needs to be transformed. This is displayed here in the <a href=https://rawgit.com/mainsy/slide-menu/master/push-slider.html>push slide menu example</a>. Adding this style to the wrapper when the menu is opened would do the trick (depending on the size of the menu).<pre><code class=language-css>	-webkit-transform: translate3d(260px, 0, 0);
 	transform: translate3d(260px, 0, 0);
-</code></pre>
-<h2 id="the-push-menu-with-scale-effect">The Push Menu With Scale Effect</h2>
-<p>Now that the content is being transformed as well as the menu. We can add some interesting effects when the menu is triggered. The scale effect can be seen at this <a href="https://rawgit.com/mainsy/slide-menu/master/scale-slider.html">push slide menu with scale effect example</a>. Something else needs to be added to achieve that particular effect. The transform style needs to be utilised to allow the z-axis manipulations to be observed.</p>
-<pre><code class="language-css">	-webkit-transform-style: preserve-3d;
+</code></pre><h2 id=the-push-menu-with-scale-effect>The Push Menu With Scale Effect</h2><p>Now that the content is being transformed as well as the menu. We can add some interesting effects when the menu is triggered. The scale effect can be seen at this <a href=https://rawgit.com/mainsy/slide-menu/master/scale-slider.html>push slide menu with scale effect example</a>. Something else needs to be added to achieve that particular effect. The transform style needs to be utilised to allow the z-axis manipulations to be observed.<pre><code class=language-css>	-webkit-transform-style: preserve-3d;
 	transform-style: preserve-3d;
-</code></pre>
-<p>Once that is added the transformation be altered to sink into the background, like so.</p>
-<pre><code class="language-css">	-webkit-transform: translate3d(100px, 0, -800px);
+</code></pre><p>Once that is added the transformation be altered to sink into the background, like so.<pre><code class=language-css>	-webkit-transform: translate3d(100px, 0, -800px);
 	transform: translate3d(100px, 0, -800px);
-</code></pre>
-<h2 id="the-push-menu-with-scale-rotate-effect">The Push Menu With Scale &amp; Rotate Effect</h2>
-<p>My personal preference is to tilt the content also. This is demonstrated at this <a href="https://rawgit.com/mainsy/slide-menu/master/rotate-slider.html">push slide menu with scale and rotate effect example</a>. To do this all that is needed is to add a rotation to the transform.</p>
-<pre><code class="language-css">	-webkit-transform: translate3d(100px, 0, -200px) rotateY(-35deg);
+</code></pre><h2 id=the-push-menu-with-scale-rotate-effect>The Push Menu With Scale &amp; Rotate Effect</h2><p>My personal preference is to tilt the content also. This is demonstrated at this <a href=https://rawgit.com/mainsy/slide-menu/master/rotate-slider.html>push slide menu with scale and rotate effect example</a>. To do this all that is needed is to add a rotation to the transform.<pre><code class=language-css>	-webkit-transform: translate3d(100px, 0, -200px) rotateY(-35deg);
 	transform: translate3d(100px, 0, -200px) rotateY(-35deg);
-</code></pre>
-<p>And that ladies and gentlemen is how you do that.</p>
-
-
-
-					</div>
-				</div>
-			</div>
-
-			<!-- Footer -->
-			<footer id="footer">
-				<div class="inner">
-    <section>
-        <h2>Feeds</h2>
-        <ul class="actions small vertical">
-            <li><a href="/feed.rss" class="button small"><i class="fa fa-rss"></i> RSS Feed</a></li>
-                        <li><a href="/feed.atom" class="button small"><i class="fa fa-rss"></i> Atom Feed</a></li>
-        </ul>
-    </section>
-    <section>
-        <a href="https://github.com/mainsy" title="mainsy github" class="social-footer"><i class="fab fa-github fa-2x"></i></a>
-        <a href="https://www.instagram.com/paulmains/" title="paulmains instagram" class="social-footer"><i class="fab fa-instagram fa-2x"></i></a>
-        <a href="https://twitter.com/paulmains" title="paulmains twitter" class="social-footer"><i class="fab fa-twitter fa-2x"></i></a>
-        <a href="https://www.linkedin.com/in/paulmains/" title="paulmains linkedin" class="social-footer"><i class="fab fa-linkedin-in fa-2x"></i></a>
-    </section>
-    <ul class="copyright">
-        <li>Copyright © 2020 Paul Mains. All Rights Reserved</li>
-        <li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
-        <li><a href="https://wyam.io">Generated by Wyam</a></li>
-    </ul>
-</section>
-			</footer>
-
-		</div>
-		
-		
-
-		<!-- Scripts -->
-		<script>hljs.initHighlightingOnLoad();</script>
-		<script src="/assets/js/jquery.min.js"></script>
-		<script src="/assets/js/skel.min.js"></script>
-		<script src="/assets/js/util.js"></script>
-		<!--[if lte IE 8]><script src="/assets/js/ie/respond.min.js"></script><![endif]-->
-		<script src="/assets/js/main.js"></script>
-
-	</body>
-
-</html>
+</code></pre><p>And that ladies and gentlemen is how you do that.</div></div></div><footer id=footer><div class=inner><section><h2>Feeds</h2><ul class="actions small vertical"><li><a href=/feed.rss class="button small"><i class="fa fa-rss"></i> RSS Feed</a><li><a href=/feed.atom class="button small"><i class="fa fa-rss"></i> Atom Feed</a></ul></section><section><a href=https://github.com/mainsy title="mainsy github" class=social-footer><i class="fab fa-github fa-2x"></i></a> <a href="https://www.instagram.com/paulmains/" title="paulmains instagram" class=social-footer><i class="fab fa-instagram fa-2x"></i></a> <a href=https://twitter.com/paulmains title="paulmains twitter" class=social-footer><i class="fab fa-twitter fa-2x"></i></a> <a href="https://www.linkedin.com/in/paulmains/" title="paulmains linkedin" class=social-footer><i class="fab fa-linkedin-in fa-2x"></i></a></section><ul class=copyright><li>Copyright © 2020 Paul Mains. All Rights Reserved<li>Design: <a href=http://html5up.net>HTML5 UP</a><li><a href=https://wyam.io>Generated by Wyam</a></ul></div></footer></div><script>hljs.initHighlightingOnLoad();</script><script src=/assets/js/jquery.min.js></script><script src=/assets/js/skel.min.js></script><script src=/assets/js/util.js></script><!--[if lte IE 8]><script src=/assets/js/ie/respond.min.js></script><![endif]--><script src=/assets/js/main.js></script>
