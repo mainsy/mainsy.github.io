@@ -4,14 +4,14 @@
 	<title>Words by Paul</title>
 	<link rel="self" href="https://paulmains.com/" />
 	<rights>2020</rights>
-	<updated>2020-05-07T14:53:07Z</updated>
+	<updated>2020-05-07T15:13:25Z</updated>
 	<subtitle>Hello, these are the words of a Full Stack Web Developer.</subtitle>
 	<entry>
 		<id>https://paulmains.com/posts/files-and-streams-part-4-memory</id>
 		<title>Files and Streams Part 4 - Reading &amp; Writing Files into Memory</title>
 		<link href="https://paulmains.com/posts/files-and-streams-part-4-memory" />
 		<link rel="enclosure" type="image" href="https://raw.githubusercontent.com/mainsy/cdn/master/posts/files-and-streams/file-banner.png" />
-		<updated>2020-04-22T00:00:00Z</updated>
+		<updated>2020-05-07T00:00:00Z</updated>
 		<content>&lt;p&gt;In the previous part I looked at how file processing could benefit from watching directories. In this part I will be looking at introducing file manipulation during the processing. Here I work through processing various text and binary files.&lt;/p&gt;
 &lt;h4 id="net-methods"&gt;.NET Methods&lt;/h4&gt;
 &lt;ul&gt;
@@ -226,7 +226,7 @@ File.AppendAllLines(NewFilePath, AppendList);
 		<title>Files and Streams Part 3 - Watching Files &amp; Directories</title>
 		<link href="https://paulmains.com/posts/files-and-streams-part-3-watching" />
 		<link rel="enclosure" type="image" href="https://raw.githubusercontent.com/mainsy/cdn/master/posts/files-and-streams/file-banner.png" />
-		<updated>2020-04-21T00:00:00Z</updated>
+		<updated>2020-05-06T00:00:00Z</updated>
 		<content>&lt;p&gt;The previous part was about how to &lt;a href="/posts/files-and-streams-part-2-management"&gt;&lt;strong&gt;manage files and directories&lt;/strong&gt;&lt;/a&gt;. In this part, I essentially refactor the application to operate by watching the files and directories for changes rather than running the file processing a single time. The result of the monitoring will trigger the processing whenever a change event is raised.&lt;/p&gt;
 &lt;h4 id="net-methods"&gt;.NET Methods&lt;/h4&gt;
 &lt;ul&gt;
@@ -659,7 +659,7 @@ public void Process()
 		<title>Files and Streams Part 2 - Managing Files &amp; Directories</title>
 		<link href="https://paulmains.com/posts/files-and-streams-part-2-management" />
 		<link rel="enclosure" type="image" href="https://raw.githubusercontent.com/mainsy/cdn/master/posts/files-and-streams/file-banner.png" />
-		<updated>2020-04-20T00:00:00Z</updated>
+		<updated>2020-05-05T00:00:00Z</updated>
 		<content>&lt;p&gt;The previous part was a brief &lt;a href="/posts/files-and-streams-part-1-overview"&gt;&lt;strong&gt;overview&lt;/strong&gt;&lt;/a&gt; and links to other parts. In this section I'm providing an example of basic file and directory management within a console application. Essentially setting up a desired directory structure and then moving or removing files depending on the required behaviour. This is made possible by three specific &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io"&gt;&lt;strong&gt;System.IO&lt;/strong&gt;&lt;/a&gt; classes.&lt;/p&gt;
 &lt;h4 id="net-methods"&gt;.NET Methods&lt;/h4&gt;
 &lt;ul&gt;
@@ -956,7 +956,7 @@ private void ProcessTextFile(string processingPath)
 		<title>Files and Streams Part 1 - Overview</title>
 		<link href="https://paulmains.com/posts/files-and-streams-part-1-overview" />
 		<link rel="enclosure" type="image" href="https://raw.githubusercontent.com/mainsy/cdn/master/posts/files-and-streams/file-banner.png" />
-		<updated>2020-04-19T00:00:00Z</updated>
+		<updated>2020-05-05T00:00:00Z</updated>
 		<content>&lt;p&gt;In this deep dive, I'll be going into file operations within &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io"&gt;&lt;strong&gt;System.IO&lt;/strong&gt;&lt;/a&gt;. It's not a subject that I've ever spent a lot of time with. So hopefully I can shed some light on the matter, maybe I'll figure out some tricks along the way.&lt;/p&gt;
 &lt;p&gt;In the subsequent parts I go through the process of creating a console app for the purpose of processing files. What action that processing happens to be is up to the specific business requirement (I have none!).&lt;/p&gt;
 &lt;p&gt;&lt;img src="https://media.giphy.com/media/c6W48VCLPF1l8Uu18A/giphy.gif" class="img-fluid" alt="files" /&gt;&lt;/p&gt;

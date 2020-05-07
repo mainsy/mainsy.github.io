@@ -5,15 +5,15 @@
 		<link>https://paulmains.com/</link>
 		<description>Hello, these are the words of a Full Stack Web Developer.</description>
 		<copyright>2020</copyright>
-		<pubDate>Thu, 07 May 2020 14:53:07 GMT</pubDate>
-		<lastBuildDate>Thu, 07 May 2020 14:53:07 GMT</lastBuildDate>
+		<pubDate>Thu, 07 May 2020 15:13:25 GMT</pubDate>
+		<lastBuildDate>Thu, 07 May 2020 15:13:25 GMT</lastBuildDate>
 		<item>
 			<title>Files and Streams Part 4 - Reading &amp; Writing Files into Memory</title>
 			<link>https://paulmains.com/posts/files-and-streams-part-4-memory</link>
 			<description>&lt;p&gt;In the previous part I looked at how file processing could benefit from watching directories. In this part I will be looking at introducing file manipulation during the processing. Here I work through processing various text and binary files.&lt;/p&gt;</description>
 			<enclosure url="https://raw.githubusercontent.com/mainsy/cdn/master/posts/files-and-streams/file-banner.png" length="0" type="image" />
 			<guid>https://paulmains.com/posts/files-and-streams-part-4-memory</guid>
-			<pubDate>Wed, 22 Apr 2020 00:00:00 GMT</pubDate>
+			<pubDate>Thu, 07 May 2020 00:00:00 GMT</pubDate>
 			<content:encoded>&lt;p&gt;In the previous part I looked at how file processing could benefit from watching directories. In this part I will be looking at introducing file manipulation during the processing. Here I work through processing various text and binary files.&lt;/p&gt;
 &lt;h4 id="net-methods"&gt;.NET Methods&lt;/h4&gt;
 &lt;ul&gt;
@@ -228,7 +228,7 @@ File.AppendAllLines(NewFilePath, AppendList);
 			<description>&lt;p&gt;The previous part was about how to &lt;a href="/posts/files-and-streams-part-2-management"&gt;&lt;strong&gt;manage files and directories&lt;/strong&gt;&lt;/a&gt;. In this part, I essentially refactor the application to operate by watching the files and directories for changes rather than running the file processing a single time. The result of the monitoring will trigger the processing whenever a change event is raised.&lt;/p&gt;</description>
 			<enclosure url="https://raw.githubusercontent.com/mainsy/cdn/master/posts/files-and-streams/file-banner.png" length="0" type="image" />
 			<guid>https://paulmains.com/posts/files-and-streams-part-3-watching</guid>
-			<pubDate>Tue, 21 Apr 2020 00:00:00 GMT</pubDate>
+			<pubDate>Wed, 06 May 2020 00:00:00 GMT</pubDate>
 			<content:encoded>&lt;p&gt;The previous part was about how to &lt;a href="/posts/files-and-streams-part-2-management"&gt;&lt;strong&gt;manage files and directories&lt;/strong&gt;&lt;/a&gt;. In this part, I essentially refactor the application to operate by watching the files and directories for changes rather than running the file processing a single time. The result of the monitoring will trigger the processing whenever a change event is raised.&lt;/p&gt;
 &lt;h4 id="net-methods"&gt;.NET Methods&lt;/h4&gt;
 &lt;ul&gt;
@@ -661,7 +661,7 @@ public void Process()
 			<description>&lt;p&gt;The previous part was a brief &lt;a href="/posts/files-and-streams-part-1-overview"&gt;&lt;strong&gt;overview&lt;/strong&gt;&lt;/a&gt; and links to other parts. In this section I'm providing an example of basic file and directory management within a console application. Essentially setting up a desired directory structure and then moving or removing files depending on the required behaviour. This is made possible by three specific &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io"&gt;&lt;strong&gt;System.IO&lt;/strong&gt;&lt;/a&gt; classes.&lt;/p&gt;</description>
 			<enclosure url="https://raw.githubusercontent.com/mainsy/cdn/master/posts/files-and-streams/file-banner.png" length="0" type="image" />
 			<guid>https://paulmains.com/posts/files-and-streams-part-2-management</guid>
-			<pubDate>Mon, 20 Apr 2020 00:00:00 GMT</pubDate>
+			<pubDate>Tue, 05 May 2020 00:00:00 GMT</pubDate>
 			<content:encoded>&lt;p&gt;The previous part was a brief &lt;a href="/posts/files-and-streams-part-1-overview"&gt;&lt;strong&gt;overview&lt;/strong&gt;&lt;/a&gt; and links to other parts. In this section I'm providing an example of basic file and directory management within a console application. Essentially setting up a desired directory structure and then moving or removing files depending on the required behaviour. This is made possible by three specific &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io"&gt;&lt;strong&gt;System.IO&lt;/strong&gt;&lt;/a&gt; classes.&lt;/p&gt;
 &lt;h4 id="net-methods"&gt;.NET Methods&lt;/h4&gt;
 &lt;ul&gt;
@@ -958,7 +958,7 @@ private void ProcessTextFile(string processingPath)
 			<description>&lt;p&gt;In this deep dive, I'll be going into file operations within &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io"&gt;&lt;strong&gt;System.IO&lt;/strong&gt;&lt;/a&gt;. It's not a subject that I've ever spent a lot of time with. So hopefully I can shed some light on the matter, maybe I'll figure out some tricks along the way.&lt;/p&gt;</description>
 			<enclosure url="https://raw.githubusercontent.com/mainsy/cdn/master/posts/files-and-streams/file-banner.png" length="0" type="image" />
 			<guid>https://paulmains.com/posts/files-and-streams-part-1-overview</guid>
-			<pubDate>Sun, 19 Apr 2020 00:00:00 GMT</pubDate>
+			<pubDate>Tue, 05 May 2020 00:00:00 GMT</pubDate>
 			<content:encoded>&lt;p&gt;In this deep dive, I'll be going into file operations within &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io"&gt;&lt;strong&gt;System.IO&lt;/strong&gt;&lt;/a&gt;. It's not a subject that I've ever spent a lot of time with. So hopefully I can shed some light on the matter, maybe I'll figure out some tricks along the way.&lt;/p&gt;
 &lt;p&gt;In the subsequent parts I go through the process of creating a console app for the purpose of processing files. What action that processing happens to be is up to the specific business requirement (I have none!).&lt;/p&gt;
 &lt;p&gt;&lt;img src="https://media.giphy.com/media/c6W48VCLPF1l8Uu18A/giphy.gif" class="img-fluid" alt="files" /&gt;&lt;/p&gt;
