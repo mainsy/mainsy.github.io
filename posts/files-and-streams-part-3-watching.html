@@ -1,0 +1,268 @@
+<!DOCTYPE html><html lang=en><head><title>Words by Paul - Files and Streams Part 3 - Watching Files &amp; Directories</title><meta charset=utf-8><meta name=viewport content="width=device-width, initial-scale=1"><link href=/assets/css/highlight.css rel=stylesheet><!--[if lte IE 8]><script src=/assets/js/ie/html5shiv.js></script><![endif]--><link rel=stylesheet href=/assets/css/main.css><!--[if lte IE 9]><link rel=stylesheet href=/assets/css/ie9.css><![endif]--> <!--[if lte IE 8]><link rel=stylesheet href=/assets/css/ie8.css><![endif]--><link href=/assets/css/override.css rel=stylesheet><link href=/assets/css/custom.css rel=stylesheet><meta name=description content="Hello, these are the words of a Full Stack Web Developer."><link type=application/rss+xml rel=alternate title="Words by Paul" href=/feed.rss><link type=application/atom+xml rel=alternate title="Words by Paul" href=/feed.atom><link rel="shortcut icon" href=/favicon.ico type=image/x-icon><link rel=icon href=/favicon.ico type=image/x-icon><meta name=application-name content="Words by Paul"><meta name=msapplication-tooltip content="Words by Paul"><meta name=msapplication-starturl content="/"><meta property=og:title content="Words by Paul - Files and Streams Part 3 - Watching Files &amp; Directories"><meta property=og:type content=website><meta property=og:url content=https://paulmains.com/posts/files-and-streams-part-3-watching><script src=/assets/js/highlight.pack.js></script><meta name=keywords content="Paul Mains,Web Developer,C#,Javascript,Full Stack,Back End,Front End,CSS,HTML"><script async src=https://kit.fontawesome.com/12b6ba9080.js crossorigin=anonymous></script><script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-W3JMRQ5');</script><body><noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-W3JMRQ5" height=0 width=0 style=display:none;visibility:hidden></iframe></noscript><div id=wrapper><header id=header><div class=inner><a href="/" class=logo> <span class=title>Words by Paul</span> </a> <a href=https://github.com/mainsy title="mainsy github" class=social-link><i class="social-link fab fa-github fa-lg"></i></a> <a href="https://www.instagram.com/paulmains/" title="paulmains instagram" class=social-link><i class="social-link fab fa-instagram fa-lg"></i></a> <a href=https://twitter.com/paulmains title="paulmains twitter" class=social-link><i class="social-link fab fa-twitter fa-lg"></i></a> <a href="https://www.linkedin.com/in/paulmains/" title="paulmains linkedin" class=social-link><i class="social-link fab fa-linkedin-in fa-lg"></i></a>  <nav><ul><li><a href=#menu>Menu</a></ul></nav></div></header><nav id=menu><h2>Menu</h2><ul><li><a href=/posts>Archive</a><li><a href=/tags>Tags</a><li><a href=/about>About Paul</a><li><a href=/deep-dives>Deep Dives</a></ul><a href=https://github.com/mainsy title="mainsy github" class=social-link-alt><i class="fab fa-github fa-2x"></i></a> <a href="https://www.instagram.com/paulmains/" title="paulmains instagram" class=social-link-alt><i class="fab fa-instagram fa-2x"></i></a> <a href=https://twitter.com/paulmains title="paulmains twitter" class=social-link-alt><i class="fab fa-twitter fa-2x"></i></a> <a href="https://www.linkedin.com/in/paulmains/" title="paulmains linkedin" class=social-link-alt><i class="fab fa-linkedin-in fa-2x"></i></a> </nav><div id=main><div class=inner><header><h1>Files and Streams Part 3 - Watching Files &amp; Directories</h1><p><em>Published on 21 April 2020</em><ul class="actions small"><li><a role=button href=/tags/C-Sharp class="button small">C Sharp</a><li><a role=button href=/tags/ConcurrentDictionary class="button small">ConcurrentDictionary</a><li><a role=button href=/tags/Console class="button small">Console</a><li><a role=button href=/tags/Deep-Dive class="button small">Deep Dive</a><li><a role=button href=/tags/Directory class="button small">Directory</a><li><a role=button href=/tags/File class="button small">File</a><li><a role=button href=/tags/MemoryCache class="button small">MemoryCache</a><li><a role=button href=/tags/String class="button small">String</a><li><a role=button href=/tags/TimeSpan class="button small">TimeSpan</a></ul></header><span class="image main"><img src=https://raw.githubusercontent.com/mainsy/cdn/master/posts/files-and-streams/file-banner.png alt="Hero image"></span><div id=content><p>The previous part was about how to <a href=/posts/files-and-streams-part-2-management><strong>manage files and directories</strong></a>. In this part, I essentially refactor the application to operate by watching the files and directories for changes rather than running the file processing a single time. The result of the monitoring will trigger the processing whenever a change event is raised.<h4 id=net-methods>.NET Methods</h4><ul><li><a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.directory.exists>Directory.Exists</a><li><a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.directory.enumeratefiles>Directory.EnumerateFiles</a><li><a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.file.exists>File.Exists</a><li><a href=https://docs.microsoft.com/en-us/dotnet/api/system.collections.concurrent.concurrentdictionary-2.tryadd>ConcurrentDictionary.TryAdd</a><li><a href=https://docs.microsoft.com/en-us/dotnet/api/system.collections.concurrent.concurrentdictionary-2.tryremove>ConcurrentDictionary.TryRemove</a><li><a href=https://docs.microsoft.com/en-us/dotnet/api/system.timespan.fromseconds>TimeSpan.FromSeconds</a><li><a href=https://docs.microsoft.com/en-us/dotnet/api/system.console.writeline>Console.WriteLine</a><li><a href=https://docs.microsoft.com/en-us/dotnet/api/system.console.read>Console.Read</a><li><a href=https://docs.microsoft.com/en-us/dotnet/api/system.runtime.caching.memorycache.add>MemoryCache.Add</a><li><a href=https://docs.microsoft.com/en-us/dotnet/api/system.string.isnullorempty>String.IsNullOrEmpty</a></ul><p><img src=https://media.giphy.com/media/JpRSD9UznNnFGO8Mwt/giphy-downsized.gif class=img-fluid alt="ready dog"><p>Let's do this!<h2 id=filesystemwatcher>FileSystemWatcher</h2><hr><p><img src=https://media.giphy.com/media/zQc8STzaOlJ3q/giphy.gif class=img-fluid alt="Arnie's watching you"><p>The <a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.filesystemwatcher><strong>FileSystemWatcher</strong></a> class when instantiated and set to raise events (by setting EnableRaisingEvents to true). This will watch a specified directory like a hawk. The properties available to change are the following (I've crossed out the properties that I didn't use).<h4 id=properties>Properties</h4><ul><li><a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.filesystemwatcher.enableraisingevents>EnableRaisingEvents</a><li><a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.filesystemwatcher.filter>Filter</a><li><a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.filesystemwatcher.path>Path</a><li><a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.filesystemwatcher.internalbuffersize>InternalBufferSize</a><li><a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.filesystemwatcher.notifyfilter>NotifyFilter</a><li><a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.filesystemwatcher.includesubdirectories>IncludeSubdirectories</a><li><del><a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.filesystemwatcher.site>Site</a></del><li><del><a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.filesystemwatcher.synchronizingobject>SynchronizingObject</a></del></ul><h2 id=initial-implementation>Initial Implementation</h2><hr><p>Initially the program processed files sequentially based on when the event is raised. This can present quite a few problems and is too rudimentary of a solution to be scalable. It will use the default buffer size and default filter (i.e everything).<pre><code class=language-C#>private static void Main(string[] args)
+{
+	WriteLine(&quot;Parsing command line options&quot;);
+
+	var directory = args[0];
+
+	if (Directory.Exists(directory))
+	{
+		WriteLine($&quot;Currently watching {directory}.&quot;);
+
+		using (var fileWatcher = new FileSystemWatcher(directory))
+		{
+			fileWatcher.IncludeSubdirectories = false;
+			fileWatcher.Created += FileCreated;
+			fileWatcher.Changed += FileChanged;
+			fileWatcher.Deleted += FileDeleted;
+			fileWatcher.Renamed += FileRenamed;
+			fileWatcher.Error += WatcherError;
+			fileWatcher.EnableRaisingEvents = true;
+			WriteLine(&quot;Press enter to quit.&quot;);
+			Read();
+		}
+	}
+	else
+	{
+		WriteLine($&quot;Error: {directory} doesn't exist.&quot;);
+	}
+}
+</code></pre><p>Multiple events being monitored to track file manipulations to then perform file manipulations on files within the monitored directory can be a recipe for disaster if not handled correctly... and somewhat of a mouth full to say.<p><img src=https://media.giphy.com/media/aMfUDqXOgVyQE/giphy.gif class=img-fluid alt="mouth full"><h4 id=event-mappings>Event Mappings</h4><p>Behaviour was mapped against the following events. The operating system will alert the <a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.filesystemwatcher><strong>FileSystemWatcher</strong></a> buffer of these changes. The code was setup to only process files on file creation and file change.<ul><li><a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.filesystemwatcher.created>Created</a><li><a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.filesystemwatcher.changed>Changed</a><li><a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.filesystemwatcher.deleted>Deleted</a><li><a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.filesystemwatcher.renamed>Renamed</a><li><a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.filesystemwatcher.error>Error</a></ul><p>Once a change event has been raised it will report the change type and perform the file processing on create and change.<pre><code class=language-C#>private static void FileCreated(object sender, FileSystemEventArgs e)
+{
+	WriteLine($&quot;{e.Name} has been created. - {e.ChangeType}&quot;);
+	var fileProcessor = new FileProcessor(e.FullPath);
+	fileProcessor.Process();
+}
+
+private static void FileChanged(object sender, FileSystemEventArgs e)
+{
+	WriteLine($&quot;{e.Name} has been changed. - {e.ChangeType}&quot;);
+	var fileProcessor = new FileProcessor(e.FullPath);
+	fileProcessor.Process();
+}
+
+private static void FileDeleted(object sender, FileSystemEventArgs e)
+{
+	WriteLine($&quot;{e.Name} has been deleted. - {e.ChangeType}&quot;);
+}
+
+private static void FileRenamed(object sender, RenamedEventArgs e)
+{
+	WriteLine($&quot;{e.OldName} has been renamed to {e.Name}. - {e.ChangeType}&quot;);
+}
+
+private static void WatcherError(object sender, ErrorEventArgs e)
+{
+	WriteLine($&quot;Error: File watcher has exploded. Exception: {e.GetException()}&quot;);
+}
+</code></pre><p>When running this application it is very noticeable that there is a flurry of activity, as events hit the buffer. The issue is that there is just too much being raised. You would not describe the frequency of file processing to be efficient. To remedy this the program is in dire need of some filtering.<p><img src=https://media.giphy.com/media/EPf0wbRlhAO8KGeVFA/giphy.gif class=img-fluid alt="cat filtering"><h2 id=filtering>Filtering</h2><hr><p>To make the file processing occur only when it is needed, the use of the NotifyFilter property is needed. We will just need to pay attention to the creation of the file or whether the file name or last write is the cause of the change.<table class=table><thead><tr><th><a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.notifyfilters#fields>NotifyFilters</a> Fields<th><th><tbody><tr><td>Attributes<td>4<td>The attributes of the file or folder.<tr><td>CreationTime<td>64<td>The time the file or folder was created.<tr><td>DirectoryName<td>2<td>The name of the directory.<tr><td>FileName<td>1<td>The name of the file.<tr><td>LastAccess<td>32<td>The date the file or folder was last opened.<tr><td>LastWrite<td>16<td>The date the file or folder last had anything written to it.<tr><td>Security<td>256<td>The security settings of the file or folder.<tr><td>Size<td>8<td>The size of the file or folder.</table><p>In addition of adding a notify filter the InternalBufferSize and the Filter properties were modified. The buffer size has been increased to 64kb and the filter was setup to only watch text files. The buffer is likely far too big, but I was just testing to see if I could see any obvious implications. It should be noted that the buffer size has some restrictions to acknowledge. It is not to be larger than 64kb and no smaller than 4kb. It is best for the buffer size to be a multiple of 4. Increasing the buffer size is expensive due to it being non-paged memory that will not be swapped out to disk. It is best to keep the buffer as small as possible. A way to ensure this is the use of notification filters.<pre><code class=language-C#>private static void Main(string[] args)
+{
+	WriteLine(&quot;Parsing command line options&quot;);
+
+	var directory = args[0];
+
+	if (Directory.Exists(directory))
+	{
+		WriteLine($&quot;Currently watching {directory}.&quot;);
+
+		using (var fileWatcher = new FileSystemWatcher(directory))
+		{
+			fileWatcher.IncludeSubdirectories = false;
+			fileWatcher.InternalBufferSize = 65536; // 64kb which is the maximum
+			fileWatcher.Filter = &quot;*.txt&quot;;
+			fileWatcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite;
+
+			fileWatcher.Created += FileCreated;
+			fileWatcher.Changed += FileChanged;
+			fileWatcher.Deleted += FileDeleted;
+			fileWatcher.Renamed += FileRenamed;
+			fileWatcher.Error += WatcherError;
+			fileWatcher.EnableRaisingEvents = true;
+			WriteLine(&quot;Press enter to quit.&quot;);
+			Read();
+		}
+	}
+	else
+	{
+		WriteLine($&quot;Error: {directory} doesn't exist.&quot;);
+	}
+}
+</code></pre><p>When running the application now, it can be noticed that there is much less activity.<p><img src=https://media.giphy.com/media/3ohzdIuqJoo8QdKlnW/giphy-downsized.gif class=img-fluid alt=yes><p>However this approach is still risky and prone to bugs and can result in file change duplicates if the file changes are too numerous. If only there was a way to restrict the processing to a happen a single time. If only there was a way to have a list of unique files that wasn't added to numerous times by other events.<p><img src=https://media.giphy.com/media/26xBI73gWquCBBCDe/giphy.gif class=img-fluid alt=thinking><h2 id=concurrency>Concurrency</h2><hr><p>Use of a concurrent dictionary can help. Even though this is introducing concurrency the files aren't being processed concurrently (this confusion isn't helped by my method naming choices). Only the list of files are being stored concurrently. The processing will still occur sequentially at a determined interval. Two usings were added to the program. The <a href=https://docs.microsoft.com/en-us/dotnet/api/system.collections.concurrent><strong>Concurrent</strong></a> namespace is so the <a href=https://docs.microsoft.com/en-us/dotnet/api/system.collections.concurrent.concurrentdictionary-2><strong>ConcurrentDictionary</strong></a> generic is made available. The <a href="https://docs.microsoft.com/en-us/dotnet/api/system.threading?view=netframework-4.8"><strong>Threading</strong></a> namespace is used to get access to the <a href=https://docs.microsoft.com/en-us/dotnet/api/system.threading.timer><strong>Timer</strong></a> class.<pre><code class=language-C#>using System.Collections.Concurrent;
+using System.Threading;
+</code></pre><p>Now that these are available, the <code>_files</code> property is added along with the <code>timer</code> variable. By adding these, the files get processed every 1000 milliseconds. The methods attributed to the &quot;<strong>Created</strong>&quot; and &quot;<strong>Changed</strong>&quot; events, were changed to use methods that add to the <code>_files</code> property.<pre><code class=language-C#>private static ConcurrentDictionary&lt;string, string&gt; _files = new ConcurrentDictionary&lt;string, string&gt;();
+
+private static void Main(string[] args)
+{
+	WriteLine(&quot;Parsing command line options&quot;);
+
+	var directory = args[0];
+
+	if (Directory.Exists(directory))
+	{
+		WriteLine($&quot;Currently watching {directory}.&quot;);
+
+		using (var fileWatcher = new FileSystemWatcher(directory))
+		using(var timer = new Timer(ProcessFilesConcurrently, null, 0, 1000))
+		{
+			fileWatcher.IncludeSubdirectories = false;
+			fileWatcher.InternalBufferSize = 65536; // 64kb which is the maximum
+			fileWatcher.Filter = &quot;*.txt&quot;;
+			fileWatcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite;
+			fileWatcher.Created += FileCreatedConcurrently;
+			fileWatcher.Changed += FileChangedConcurrently;
+			fileWatcher.Deleted += FileDeleted;
+			fileWatcher.Renamed += FileRenamed;
+			fileWatcher.Error += WatcherError;
+			fileWatcher.EnableRaisingEvents = true;
+			WriteLine(&quot;Press enter to quit.&quot;);
+			Read();
+		}
+	}
+	else
+	{
+		WriteLine($&quot;Error: {directory} doesn't exist.&quot;);
+	}
+}
+</code></pre><p>Here is where the files are collected. Because it is now using a concurrent dictionary, if the<pre><code class=language-C#>private static void FileCreatedConcurrently(object sender, FileSystemEventArgs e)
+{
+   WriteLine($&quot;{e.Name} has been created. - {e.ChangeType}&quot;);
+   _files.TryAdd(e.FullPath, e.FullPath);
+}
+
+private static void FileChangedConcurrently(object sender, FileSystemEventArgs e)
+{
+   WriteLine($&quot;{e.Name} has been changed. - {e.ChangeType}&quot;);
+   _files.TryAdd(e.FullPath, e.FullPath);
+}
+</code></pre><p>Here is where the files are processed. It will iterate through the files and attempt to remove from the list before processing the file.<pre><code class=language-C#>private static void ProcessFilesConcurrently(object stateInfo)
+{
+   foreach (var name in _files.Keys)
+   {
+       // underscore means value is discarded
+       if (!_files.TryRemove(name, out _))
+       {
+           continue;
+       }
+
+       var fileProcessor = new FileProcessor(name);
+       fileProcessor.Process();
+   }
+}
+</code></pre><p>This approach is slightly better than it was previously, as there is less likelihood of inadvertent processing duplications occurring. The watcher may fire more than one change event for the file but the file will only get processed once. However, there is a tiny risk when using the concurrent dictionary alongside a timer. There is a small possibility that the watcher will fire multiple events and the first will be before the timer interval and another will be after. This will result in the file processing occurring twice. It is a tiny problem that would likely become a much bigger issue when scaling up. To lessen this as an issue the timer interval could be extended, but really, that's just wrapping it in tape and running away. If only there as a way to provide a time for each file to wait for changes events to trickle in. It wouldn't even need to be a long time... maybe just a second or two.<p><img src=https://media.giphy.com/media/1LmBFphV4XNSw/giphy.gif class=img-fluid alt="ron swanson confused"><p>If only...<h2 id=processing-from-a-cache>Processing from a cache!</h2><hr><p>The bugs that occur in the concurrent dictionary can be resolved by using a cache instead. By using a cache, you can specify an expiration on each file being added. There will be a noticeable difference in the output as the cache only checks for expired items every 20 seconds. However, it is the more robust solution. So let's rip that concurrency dictionary and timer out and add some new methods.<p>To use the <a href=https://docs.microsoft.com/en-us/dotnet/api/system.runtime.caching.memorycache><strong>MemoryCache</strong></a> class we need to use the <a href=https://docs.microsoft.com/en-us/dotnet/api/system.runtime.caching><strong>Caching</strong></a> namespace.<pre><code class=language-C#>using System.Runtime.Caching;
+</code></pre><p>The <a href=https://docs.microsoft.com/en-us/dotnet/api/system.collections.concurrent.concurrentdictionary-2><strong>ConcurrentDictionary</strong></a> has been replaced with a <a href=https://docs.microsoft.com/en-us/dotnet/api/system.runtime.caching.memorycache><strong>MemoryCache</strong></a>. The timer has now been removed. The Main method now sets up the <a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.filesystemwatcher><strong>FileSystemWatcher</strong></a> and binds the appropriate events. It doesn't do any processing directly. The new methods were created with this processing behaviour.<pre><code class=language-C#>private static MemoryCache _files = MemoryCache.Default;
+
+private static void Main(string[] args)
+{
+	WriteLine(&quot;Parsing command line options&quot;);
+
+	var directory = args[0];
+
+	if (Directory.Exists(directory))
+	{
+		WriteLine($&quot;Currently watching {directory}.&quot;);
+
+		using (var fileWatcher = new FileSystemWatcher(directory))
+		{
+			fileWatcher.IncludeSubdirectories = false;
+			fileWatcher.InternalBufferSize = 65536; // 64kb which is the maximum
+			fileWatcher.Filter = &quot;*.txt&quot;;
+			fileWatcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite;
+			fileWatcher.Created += FileCreatedCaching;
+			fileWatcher.Changed += FileChangedCaching;
+			fileWatcher.Deleted += FileDeleted;
+			fileWatcher.Renamed += FileRenamed;
+			fileWatcher.Error += WatcherError;
+			fileWatcher.EnableRaisingEvents = true;
+			WriteLine(&quot;Press enter to quit.&quot;);
+			Read();
+		}
+	}
+	else
+	{
+		WriteLine($&quot;Error: {directory} doesn't exist.&quot;);
+	}
+}
+</code></pre><p>Two new methods were setup purely to add the file to the cache.<pre><code class=language-C#>private static void FileCreatedCaching(object sender, FileSystemEventArgs e)
+{
+	WriteLine($&quot;{e.Name} has been created. - {e.ChangeType}&quot;);
+	AddToCache(e.FullPath);
+}
+
+private static void FileChangedCaching(object sender, FileSystemEventArgs e)
+{
+	WriteLine($&quot;{e.Name} has been changed. - {e.ChangeType}&quot;);
+	AddToCache(e.FullPath);
+}
+</code></pre><p>The new <strong>AddToCache</strong> method sets up a new cache item and sets the method to use when the cache item expires. The expiration is set to 2 seconds, (as this is the minimum required). Once the item is added to the cache, it will quickly expire and the <a href=https://docs.microsoft.com/en-us/dotnet/api/system.runtime.caching.memorycache><strong>MemoryCache</strong></a> will periodically (every 20 seconds) check for expired items. Once an item expires, it will run the <strong>ProcessFileFromCache</strong> method.<p>The <strong>ProcessFileFromCache</strong> method exists to check that the item was removed for the acceptable reason and run the file processor.<pre><code class=language-C#>private static void AddToCache(string fullPath)
+{
+	var item = new CacheItem(fullPath, fullPath);
+
+	var policy = new CacheItemPolicy
+	{
+		RemovedCallback = ProcessFileFromCache,
+		SlidingExpiration = TimeSpan.FromSeconds(2)
+	};
+
+	_files.Add(item, policy);
+}
+
+private static void ProcessFileFromCache(CacheEntryRemovedArguments args)
+{
+	WriteLine($&quot;{args.CacheItem.Key} has been removed from cache, due to {args.RemovedReason}&quot;);
+
+	if (args.RemovedReason == CacheEntryRemovedReason.Expired)
+	{
+		var fileProcessor = new FileProcessor(args.CacheItem.Key);
+		fileProcessor.Process();
+	}
+	else
+	{
+		WriteLine($&quot;{args.CacheItem.Key} has been removed from cache, due to unknown reason.&quot;);
+	}
+}
+</code></pre><p>There was some additional code added to make this work on files that existed prior to the app start. The <strong>ProcessingExistingFiles</strong> method was set up to enumerate through the existing files using the <a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.directory.enumeratefiles><strong>EnumerateFiles</strong></a> method and add it to the file cache.<pre><code class=language-C#>private static void Main(string[] args)
+{
+	WriteLine($&quot;{DateTime.Now.ToLongTimeString()} - Parsing command line options&quot;);
+
+	var directory = args[0];
+
+	if (Directory.Exists(directory))
+	{
+		WriteLine($&quot;{DateTime.Now.ToLongTimeString()} - Currently watching {directory}.&quot;);
+		ProcessExistingFiles(directory);
+</code></pre><pre><code class=language-C#>private static void ProcessExistingFiles(string directory)
+{
+	WriteLine($&quot;{DateTime.Now.ToLongTimeString()} - Processing {directory} for files that already exist.&quot;);
+
+	foreach (var path in Directory.EnumerateFiles(directory))
+	{
+		WriteLine($&quot;{DateTime.Now.ToLongTimeString()} - Processing {path}.&quot;);
+		AddToCache(path);
+	}
+}
+</code></pre><p>I have went ahead and added timestamps to all of the outputs to illustrate the time it takes. As there will be a noticeable difference. I deleted the contents of the folder and added all of the text files to this before running the application (it has to be this way to avoid an issue that will be cleared up next).<p><img src=https://raw.githubusercontent.com/mainsy/cdn/master/posts/files-and-streams/directory-cache-output.png class=img-fluid alt="command output"><p>Its clear when the application starts and when the processing occurs (near enough to the 20 seconds that was predicted).<h2 id=cleaning-up>Cleaning up</h2><hr><h4 id=issues-with-missing-files>Issues with missing files</h4><p>The reason why I had to run the application in that specific way (with the files already existing), was due to an error that happens when adding multiple new files.<p><img src=https://raw.githubusercontent.com/mainsy/cdn/master/posts/files-and-streams/file-not-found-error.png class=img-fluid alt="file not found error"><p>This is due to the processing directory being deleted once the file has been processed. To fix this I just removed that specific functionality in the file processor. Below I just commented that line out.<pre><code class=language-C#>// FileProcessor.cs
+public void Process()
+{
+	WriteLine($&quot;Begin processing of {_filePath}&quot;);
+
+	// Check if exists using the &quot;Exists&quot; Static Method
+	if (!File.Exists(_filePath))
+	{
+		WriteLine($&quot;Error: {_filePath} does not exist.&quot;);
+		return;
+	}
+
+	BackupOriginal();
+
+	var processingFilePath = MoveToProcessing();
+
+	if (string.IsNullOrEmpty(processingFilePath))
+	{
+		return;
+	}
+
+	ProcessFile(processingFilePath);
+
+	// Need to stop the deleting of the processing folder
+	//RemoveProcessing(processingFilePath);
+}
+</code></pre><p>Now it should work.<p><img src=https://media.giphy.com/media/IgLnqEAUh3XP6dagEk/giphy-downsized.gif class=img-fluid alt="happy dog"><h2 id=summary>Summary</h2><hr><p>This post has gone through the process of changing the application produced in <a href=/posts/files-and-streams-part-2-management><strong>Part 2</strong></a> into an application that watches a directory for changes. There was an attempt to use a <a href=https://docs.microsoft.com/en-us/dotnet/api/system.threading.timer><strong>Timer</strong></a> alongside a <a href=https://docs.microsoft.com/en-us/dotnet/api/system.collections.concurrent.concurrentdictionary-2><strong>ConcurrentDictionary</strong></a>, but that wasn't sufficient. It was then changed to use a <a href=https://docs.microsoft.com/en-us/dotnet/api/system.runtime.caching.memorycache><strong>MemoryCache</strong></a>. This may not be the conventional way to use the <a href=https://docs.microsoft.com/en-us/dotnet/api/system.runtime.caching.memorycache><strong>MemoryCache</strong></a>. But the expiration callback behaviour is useful in the current context. The code for this can be seen on my <a href=""><strong>GitHub</strong></a> (it is DataProcessor2).<p>In the next Part, I'll expand on <a href=/posts/files-and-streams-part-4-memory><strong>reading files into memory</strong></a>, as it will be quite useful if the file processing actually did something with the files.<p>But for now.<p><img src=https://media.giphy.com/media/4YFcrXwpjeMWk/giphy-downsized.gif class=img-fluid alt="tired dog"><p>I'm done...</div></div></div><footer id=footer><div class=inner><section><h2>Feeds</h2><ul class="actions small vertical"><li><a href=/feed.rss class="button small"><i class="fa fa-rss"></i> RSS Feed</a><li><a href=/feed.atom class="button small"><i class="fa fa-rss"></i> Atom Feed</a></ul></section><section><a href=https://github.com/mainsy title="mainsy github" class=social-footer><i class="fab fa-github fa-2x"></i></a> <a href="https://www.instagram.com/paulmains/" title="paulmains instagram" class=social-footer><i class="fab fa-instagram fa-2x"></i></a> <a href=https://twitter.com/paulmains title="paulmains twitter" class=social-footer><i class="fab fa-twitter fa-2x"></i></a> <a href="https://www.linkedin.com/in/paulmains/" title="paulmains linkedin" class=social-footer><i class="fab fa-linkedin-in fa-2x"></i></a></section><ul class=copyright><li>Copyright © 2020 Paul Mains. All Rights Reserved<li>Design: <a href=http://html5up.net>HTML5 UP</a><li><a href=https://wyam.io>Generated by Wyam</a></ul></div></footer></div><script>hljs.initHighlightingOnLoad();</script><script src=https://code.jquery.com/jquery-3.5.0.slim.min.js integrity="sha256-MlusDLJIP1GRgLrOflUQtshyP0TwT/RHXsI1wWGnQhs=" crossorigin=anonymous></script><script src=/assets/js/skel.min.js></script><script src=/assets/js/util.js></script><!--[if lte IE 8]><script src=/assets/js/ie/respond.min.js></script><![endif]--><script src=/assets/js/main.js></script>

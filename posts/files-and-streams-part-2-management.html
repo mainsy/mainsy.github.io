@@ -1,0 +1,204 @@
+<!DOCTYPE html><html lang=en><head><title>Words by Paul - Files and Streams Part 2 - Managing Files &amp; Directories</title><meta charset=utf-8><meta name=viewport content="width=device-width, initial-scale=1"><link href=/assets/css/highlight.css rel=stylesheet><!--[if lte IE 8]><script src=/assets/js/ie/html5shiv.js></script><![endif]--><link rel=stylesheet href=/assets/css/main.css><!--[if lte IE 9]><link rel=stylesheet href=/assets/css/ie9.css><![endif]--> <!--[if lte IE 8]><link rel=stylesheet href=/assets/css/ie8.css><![endif]--><link href=/assets/css/override.css rel=stylesheet><link href=/assets/css/custom.css rel=stylesheet><meta name=description content="Hello, these are the words of a Full Stack Web Developer."><link type=application/rss+xml rel=alternate title="Words by Paul" href=/feed.rss><link type=application/atom+xml rel=alternate title="Words by Paul" href=/feed.atom><link rel="shortcut icon" href=/favicon.ico type=image/x-icon><link rel=icon href=/favicon.ico type=image/x-icon><meta name=application-name content="Words by Paul"><meta name=msapplication-tooltip content="Words by Paul"><meta name=msapplication-starturl content="/"><meta property=og:title content="Words by Paul - Files and Streams Part 2 - Managing Files &amp; Directories"><meta property=og:type content=website><meta property=og:url content=https://paulmains.com/posts/files-and-streams-part-2-management><script src=/assets/js/highlight.pack.js></script><meta name=keywords content="Paul Mains,Web Developer,C#,Javascript,Full Stack,Back End,Front End,CSS,HTML"><script async src=https://kit.fontawesome.com/12b6ba9080.js crossorigin=anonymous></script><script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-W3JMRQ5');</script><body><noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-W3JMRQ5" height=0 width=0 style=display:none;visibility:hidden></iframe></noscript><div id=wrapper><header id=header><div class=inner><a href="/" class=logo> <span class=title>Words by Paul</span> </a> <a href=https://github.com/mainsy title="mainsy github" class=social-link><i class="social-link fab fa-github fa-lg"></i></a> <a href="https://www.instagram.com/paulmains/" title="paulmains instagram" class=social-link><i class="social-link fab fa-instagram fa-lg"></i></a> <a href=https://twitter.com/paulmains title="paulmains twitter" class=social-link><i class="social-link fab fa-twitter fa-lg"></i></a> <a href="https://www.linkedin.com/in/paulmains/" title="paulmains linkedin" class=social-link><i class="social-link fab fa-linkedin-in fa-lg"></i></a>  <nav><ul><li><a href=#menu>Menu</a></ul></nav></div></header><nav id=menu><h2>Menu</h2><ul><li><a href=/posts>Archive</a><li><a href=/tags>Tags</a><li><a href=/about>About Paul</a><li><a href=/deep-dives>Deep Dives</a></ul><a href=https://github.com/mainsy title="mainsy github" class=social-link-alt><i class="fab fa-github fa-2x"></i></a> <a href="https://www.instagram.com/paulmains/" title="paulmains instagram" class=social-link-alt><i class="fab fa-instagram fa-2x"></i></a> <a href=https://twitter.com/paulmains title="paulmains twitter" class=social-link-alt><i class="fab fa-twitter fa-2x"></i></a> <a href="https://www.linkedin.com/in/paulmains/" title="paulmains linkedin" class=social-link-alt><i class="fab fa-linkedin-in fa-2x"></i></a> </nav><div id=main><div class=inner><header><h1>Files and Streams Part 2 - Managing Files &amp; Directories</h1><p><em>Published on 20 April 2020</em><ul class="actions small"><li><a role=button href=/tags/C-Sharp class="button small">C Sharp</a><li><a role=button href=/tags/Console class="button small">Console</a><li><a role=button href=/tags/Deep-Dive class="button small">Deep Dive</a><li><a role=button href=/tags/Directory class="button small">Directory</a><li><a role=button href=/tags/File class="button small">File</a><li><a role=button href=/tags/Guid class="button small">Guid</a><li><a role=button href=/tags/Path class="button small">Path</a><li><a role=button href=/tags/String class="button small">String</a></ul></header><span class="image main"><img src=https://raw.githubusercontent.com/mainsy/cdn/master/posts/files-and-streams/file-banner.png alt="Hero image"></span><div id=content><p>The previous part was a brief <a href=/posts/files-and-streams-part-1-overview><strong>overview</strong></a> and links to other parts. In this section I'm providing an example of basic file and directory management within a console application. Essentially setting up a desired directory structure and then moving or removing files depending on the required behaviour. This is made possible by three specific <a href=https://docs.microsoft.com/en-us/dotnet/api/system.io><strong>System.IO</strong></a> classes.<h4 id=net-methods>.NET Methods</h4><ul><li><a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.file.exists>File.Exists</a><li><a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.file.copy>File.Copy</a><li><a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.file.move>File.Move</a><li><a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.directory.exists>Directory.Exists</a><li><a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.directory.createdirectory>Directory.CreateDirectory</a><li><a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.directory.delete>Directory.Delete</a><li><a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.directory.getfiles>Directory.GetFiles</a><li><a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.path.combine>Path.Combine</a><li><a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.path.getfilename>Path.GetFileName</a><li><a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.path.getfilenamewithoutextension>Path.GetFileNameWithoutExtension</a><li><a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.path.getdirectoryname>Path.GetDirectoryName</a><li><a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.path.getextension>Path.GetExtension</a><li><a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.path.changeextension>Path.ChangeExtension</a><li><a href=https://docs.microsoft.com/en-us/dotnet/api/system.console.readline>Console.ReadLine</a><li><a href=https://docs.microsoft.com/en-us/dotnet/api/system.console.writeline>Console.WriteLine</a><li><a href=https://docs.microsoft.com/en-us/dotnet/api/system.guid.newguid>Guid.NewGuid</a><li><a href=https://docs.microsoft.com/en-us/dotnet/api/system.string.isnullorempty>String.IsNullOrEmpty</a></ul><p><img src=https://media.giphy.com/media/CjmvTCZf2U3p09Cn0h/giphy-downsized.gif class=img-fluid alt="ready cat"><p>Lets do this!<h2 id=setup>Setup</h2><hr><p>To start I created a <strong>.NET framework</strong> console app project (.net 4.8). So I have created a command line application that takes 2 arguments &quot;<strong>-f</strong>&quot; and &quot;<strong>-d</strong>&quot;. If you enter &quot;<strong>-f</strong>&quot; it will run the <strong>single file</strong> process and if &quot;<strong>-d</strong>&quot; is entered the <strong>multi file</strong> process is started (file and directory).<pre><code class=language-C#>private static void Main(string[] args)
+{
+	var command = args[0];
+
+	switch (command)
+	{
+		switch (command)
+		{
+			case &quot;-f&quot;:
+				RunFileCommand(args[1]);
+				break;
+			case &quot;-d&quot;:
+				RunDirectoryCommand(args[1], args[2]);
+				break;
+			default:
+				WriteLine(&quot;Invalid command line options&quot;);
+				break;
+		}
+	}
+
+	WriteLine(&quot;Press enter key to quit.&quot;);
+	ReadLine();
+}
+</code></pre><p>The <strong>single file</strong> process will output a message and begin the file processing for a single item path.<pre><code class=language-C#>private static void RunFileCommand(string path)
+{
+	WriteLine($&quot;Single file {path} selected&quot;);
+	var fileProcessor = new FileProcessor(path);
+	fileProcessor.Process();
+}
+</code></pre><p>The <strong>multi file</strong> process will output relevant messages, iterate through all the text files and perform the file process on each of them. At this point, this is the first time a <a href=https://docs.microsoft.com/en-us/dotnet/api/system.io><strong>System.IO</strong></a> method is used, utilising the <a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.directory><strong>Directory</strong></a> class. Here the <a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.directory.getfiles><strong>GetFiles</strong></a> method will provide a string array of files in the provided path.<pre><code class=language-C#>private static void RunDirectoryCommand(string path, string type)
+{
+	WriteLine($&quot;Directory {path} selected for {type} files&quot;);
+	switch (type)
+	{
+		case &quot;txt&quot;:
+			var textFiles = Directory.GetFiles(path, &quot;*.txt&quot;);
+			foreach (var textFilePath in textFiles)
+			{
+				var fileProcessor = new FileProcessor(textFilePath);
+				fileProcessor.Process();
+			}
+
+			break;
+		default:
+			WriteLine($&quot;Error: {type} is not a supported file type.&quot;);
+			return;
+	}
+}
+</code></pre><p>The <strong>File Processor</strong> is a simple class that requires a path passed into it. It will throw an exception if no path value is provided. It determines the file name and parent directory from this path value in the constructor. It does this using the <a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.path.getfilename><strong>GetFileName</strong></a> and <a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.path.getdirectoryname><strong>GetDirectoryName</strong></a> methods.<p>Once this class has been instantiated the <strong>Process</strong> method can be ran. The <a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.file><strong>File</strong></a> class is used to check if the file actually exists using the <a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.file.exists><strong>Exists</strong></a> method (quite self-explanatory really). Currently this behaviour just outputs messages to the console and checks for the existence of a file.<pre><code class=language-C#>internal class FileProcessor
+{
+	private const string OriginalDir = &quot;original&quot;;
+	private const string ProcessDir = &quot;processing&quot;;
+	private const string FinalDir = &quot;processed&quot;;
+
+	private readonly string _filePath = string.Empty;
+	private readonly string _rootPath = string.Empty;
+	private readonly string _fileName = string.Empty; 
+
+	public FileProcessor()
+	{
+		throw new ArgumentException(&quot;FileProcessor must be instantiated with path parameter.&quot;);
+	}
+
+	public FileProcessor(string path)
+	{
+		_filePath = path;
+		_fileName = Path.GetFileName(_filePath);
+		_rootPath = Path.GetDirectoryName(_filePath);
+	}
+
+	public void Process()
+	{
+		WriteLine($&quot;Begin processing of {_filePath}&quot;);
+
+		if (!File.Exists(_filePath))
+		{
+			WriteLine($&quot;Error: {_filePath} does not exist.&quot;);
+			return;
+		}
+	}
+}
+</code></pre><h2 id=backup-original>Backup Original</h2><hr><p>The first stage of this process needs to take the referenced file and back it up to a folder. In the <strong>Process</strong> method, it uses a new method called <strong>BackupOriginal</strong>.<pre><code class=language-C#>public void Process()
+{
+	WriteLine($&quot;Begin processing of {_filePath}&quot;);
+
+	if (!File.Exists(_filePath))
+	{
+		WriteLine($&quot;Error: {_filePath} does not exist.&quot;);
+		return;
+	}
+
+	BackupOriginal();
+}
+</code></pre><p>The <strong>BackupOriginal</strong> method utilises the <a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.path><strong>Path</strong></a>, <a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.directory><strong>Directory</strong></a> and <a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.file><strong>File</strong></a> <a href=https://docs.microsoft.com/en-us/dotnet/api/system.io><strong>System.IO</strong></a> classes.<p>The <a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.path.combine><strong>Combine</strong></a> method requires an absolute path as its first argument then any subsequent string values will be combined to it, to produce a new path. This method has overloads that will combine up to four strings or a single string array.<p>The <a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.directory.createdirectory><strong>CreateDirectory</strong></a> method will take a path and create it, if it does not already exist. If the path already exists it will not throw an error it will just return the directory that already exists as a <a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.directoryinfo><strong>DirectoryInfo</strong></a> object. So this will ensure there is a directory to work with.<p>The <a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.file.copy><strong>Copy</strong></a> method takes a path, a destination path and a boolean to decide if items can be overwritten during the copy.<p>This method will make sure the directory exists to back up the original item to and then copy the item to this declared directory. In the class, the name of this folder is declared as &quot;<strong>original</strong>&quot;.<pre><code class=language-C#>private void BackupOriginal()
+{
+	var originalDir = Path.Combine(_rootPath, OriginalDir);
+
+	Directory.CreateDirectory(originalDir);
+
+	var tempFilePath = Path.Combine(originalDir, _fileName);
+
+	WriteLine($&quot;Copying {_filePath} to {tempFilePath}&quot;);
+
+	File.Copy(sourceFileName:_filePath, destFileName:tempFilePath, overwrite:true);
+}
+</code></pre><h2 id=move-to-processing>Move to Processing</h2><hr><p>The second stage of this process will take the referenced file and move it to the processing folder. The <strong>Process</strong> method has been modified to use the new <strong>MoveToProcessing</strong> method. This will return the location of the file to be processed in the new location.<pre><code class=language-C#>public void Process()
+{
+	WriteLine($&quot;Begin processing of {_filePath}&quot;);
+
+	if (!File.Exists(_filePath))
+	{
+		WriteLine($&quot;Error: {_filePath} does not exist.&quot;);
+		return;
+	}
+
+	BackupOriginal();
+
+	var processingFilePath = MoveToProcessing();
+
+	if (string.IsNullOrEmpty(processingFilePath))
+	{
+		return;
+	}
+}
+</code></pre><p>The MoveToProcessing method will create the processing directory if it does not already exist. It will check if the item already exists in the processing directory. If it does not already exist the file will be moved to the processing folder using the <a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.file.move><strong>Move</strong></a> method. A simple operation that requires the path of an item and the desired path of the item.<pre><code class=language-C#>private string MoveToProcessing()
+{
+	Directory.CreateDirectory(Path.Combine(_rootPath, ProcessDir));
+
+	var processingFilePath = Path.Combine(_rootPath, ProcessDir, _fileName);
+
+	if (File.Exists(processingFilePath))
+	{
+		WriteLine($&quot;Error: {processingFilePath} is already being processed.&quot;);
+		return string.Empty;
+	}
+
+	WriteLine($&quot;Moving {_filePath} to {processingFilePath}&quot;);
+
+	// no way to overwrite if file already exists in new location
+	File.Move(_filePath, processingFilePath);
+
+	return processingFilePath;
+}
+</code></pre><h2 id=process-file-remove-processing>Process File &amp; Remove Processing</h2><hr><p>Now that the file has been backed up and moved to the correct location. It can now be processed. Below the <strong>ProcessFile</strong> and <strong>RemoveProcessing</strong> methods have been added to the <strong>Process</strong> method.<pre><code class=language-C#>public void Process()
+{
+	WriteLine($&quot;Begin processing of {_filePath}&quot;);
+
+	if (!File.Exists(_filePath))
+	{
+		WriteLine($&quot;Error: {_filePath} does not exist.&quot;);
+		return;
+	}
+
+	BackupOriginal();
+
+	var processingFilePath = MoveToProcessing();
+
+	if (string.IsNullOrEmpty(processingFilePath))
+	{
+		return;
+	}
+
+	ProcessFile(processingFilePath);
+
+	RemoveProcessing(processingFilePath);
+}
+</code></pre><p>The ProcessFile method just requires the processing file path. At this point, it will do a check on the extension of the file. Currently there is only txt file specific behaviour. It does this using the <a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.path.getextension><strong>GetExtension</strong></a> method. You can see the anticipated return value in the switch statement. The <strong>ProcessTextFile</strong> method does nothing but report that the file is being processed currently. Any modifications to this can be done another time, this post is about managing files, the editing files section will be handled elsewhere.<p>Once the file has finished being processed, it will create the final directory ready to place the processed file inside. A new file name will be computed using the <a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.path.getfilenamewithoutextension><strong>GetFileNameWithoutExtension</strong></a> method alongside the <a href=https://docs.microsoft.com/en-us/dotnet/api/system><strong>System</strong></a> <a href=https://docs.microsoft.com/en-us/dotnet/api/system.guid.newguid><strong>NewGuid</strong></a> method. The result of this would be a new unique file name (just incase a file needs to processed multiple times). The <a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.path.changeextension><strong>ChangeExtension</strong></a> method is also an option to be used if preferred (maybe the .done extension could work).<p>Whichever naming method is used the processed file will then be moved to the &quot;<strong>finished</strong>&quot; directory.<pre><code class=language-C#>private void ProcessFile(string processingFilePath)
+{
+	var extension = Path.GetExtension(_filePath);
+
+	switch (extension)
+	{
+		case &quot;.txt&quot;:
+			ProcessTextFile(processingFilePath);
+			break;
+		default:
+			WriteLine($&quot;{extension} is not a supported file type.&quot;);
+			break;
+	}
+
+	var finishedDir = Path.Combine(_rootPath, FinalDir);
+	Directory.CreateDirectory(finishedDir);
+
+	WriteLine($&quot;Moving {processingFilePath} to {finishedDir}&quot;);
+
+	var finishedFileName = $&quot;{Path.GetFileNameWithoutExtension(_filePath)}-{Guid.NewGuid()}{extension}&quot;;
+	var finishedPath = Path.Combine(finishedDir, finishedFileName);
+	File.Move(processingFilePath, finishedPath);
+}
+
+private void ProcessTextFile(string processingPath)
+{
+	// Insert Processing Logic
+	WriteLine($&quot;Processing {processingPath}&quot;);
+}
+</code></pre><p>Once the processed file has been moved, there is no need for the &quot;<strong>processed</strong>&quot; directory. Using the <a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.file.delete><strong>Delete</strong></a> method will remove everything inside the directory and then the directory itself.<pre><code class=language-C#>private void RemoveProcessing(string processingFilePath)
+{
+	var processingPath = Path.GetDirectoryName(processingFilePath);
+	if (!string.IsNullOrEmpty(processingPath))
+	{
+		Directory.Delete(processingPath, recursive:true);
+	}
+}
+</code></pre><h2 id=run-the-command>Run the command</h2><hr><p>Before the command is run, there is a need for data to process. Here is an example of some text files that was used. Files can be copied into the path directory to be processed.<p><img src=https://raw.githubusercontent.com/mainsy/cdn/master/posts/files-and-streams/test-data-files.png class=img-fluid alt="text files"><p>Once there is a file to process, it can be referenced in the start options in the console project settings.<p><img src=https://raw.githubusercontent.com/mainsy/cdn/master/posts/files-and-streams/command-line-arguments-file.png class=img-fluid alt="command line arguments file"><p>Starting the console app will trigger the file process. The output can be observed in the command line window.<p><img src=https://raw.githubusercontent.com/mainsy/cdn/master/posts/files-and-streams/command-line-file-output.png class=img-fluid alt="command line file output"><p>Inside the path directory, now there will be 2 folders. 1 with the backed up text file and the other with the finished processed file.<p><img src=https://raw.githubusercontent.com/mainsy/cdn/master/posts/files-and-streams/folder-output.png class=img-fluid alt="folder output"><p>As you can see, the file has been processed and has been changed to have the guid in file name.<p><img src=https://raw.githubusercontent.com/mainsy/cdn/master/posts/files-and-streams/file-output.png class=img-fluid alt="file output"><p>Using the directory command will exhibit different behaviour. This can be noticed by changing the command line arguments to use the -d option. The file was removed from the path and the file type is also referenced. In preparation for this, I cleared the path directory and copied all of the files into the path directory.<p><img src=https://raw.githubusercontent.com/mainsy/cdn/master/posts/files-and-streams/command-line-arguments-directory.png class=img-fluid alt="command line arguments directory"><p>Running the console app now will display more information, as all of the items get processed.<p><img src=https://raw.githubusercontent.com/mainsy/cdn/master/posts/files-and-streams/command-line-directory-output.png class=img-fluid alt="command line directory output"><p>The result of this is all of the files being processed with new file names.<p><img src=https://raw.githubusercontent.com/mainsy/cdn/master/posts/files-and-streams/directory-output.png class=img-fluid alt="folder output"><h2 id=summary>Summary</h2><hr><p>The full code for this can be seen on my <a href=https://github.com/mainsy><strong>github</strong></a>. In short I have put together a very basic example of how files and directories can be managed programmatically. The 2 set behaviours were to manage a single file or a collection of files. Both are easily achievable with the <a href=https://docs.microsoft.com/en-us/dotnet/api/system.io><strong>System.IO</strong></a> namespace. The actual processing of these files will be witnessed in the parts to come.<p>In <a href=/posts/files-and-streams-part-3-watching><strong>Part 3</strong></a> I'll expand on this by providing an example on how this can be monitored, rather than being executed on a case by case basis.<p>But for now.<p><img src=https://media.giphy.com/media/cuPm4p4pClZVC/giphy-downsized.gif class=img-fluid alt="tired cat"><p>I'm done.</div></div></div><footer id=footer><div class=inner><section><h2>Feeds</h2><ul class="actions small vertical"><li><a href=/feed.rss class="button small"><i class="fa fa-rss"></i> RSS Feed</a><li><a href=/feed.atom class="button small"><i class="fa fa-rss"></i> Atom Feed</a></ul></section><section><a href=https://github.com/mainsy title="mainsy github" class=social-footer><i class="fab fa-github fa-2x"></i></a> <a href="https://www.instagram.com/paulmains/" title="paulmains instagram" class=social-footer><i class="fab fa-instagram fa-2x"></i></a> <a href=https://twitter.com/paulmains title="paulmains twitter" class=social-footer><i class="fab fa-twitter fa-2x"></i></a> <a href="https://www.linkedin.com/in/paulmains/" title="paulmains linkedin" class=social-footer><i class="fab fa-linkedin-in fa-2x"></i></a></section><ul class=copyright><li>Copyright © 2020 Paul Mains. All Rights Reserved<li>Design: <a href=http://html5up.net>HTML5 UP</a><li><a href=https://wyam.io>Generated by Wyam</a></ul></div></footer></div><script>hljs.initHighlightingOnLoad();</script><script src=https://code.jquery.com/jquery-3.5.0.slim.min.js integrity="sha256-MlusDLJIP1GRgLrOflUQtshyP0TwT/RHXsI1wWGnQhs=" crossorigin=anonymous></script><script src=/assets/js/skel.min.js></script><script src=/assets/js/util.js></script><!--[if lte IE 8]><script src=/assets/js/ie/respond.min.js></script><![endif]--><script src=/assets/js/main.js></script>

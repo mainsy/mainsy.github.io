@@ -5,8 +5,974 @@
 		<link>https://paulmains.com/</link>
 		<description>Hello, these are the words of a Full Stack Web Developer.</description>
 		<copyright>2020</copyright>
-		<pubDate>Sat, 18 Apr 2020 14:13:26 GMT</pubDate>
-		<lastBuildDate>Sat, 18 Apr 2020 14:13:26 GMT</lastBuildDate>
+		<pubDate>Thu, 07 May 2020 14:53:07 GMT</pubDate>
+		<lastBuildDate>Thu, 07 May 2020 14:53:07 GMT</lastBuildDate>
+		<item>
+			<title>Files and Streams Part 4 - Reading &amp; Writing Files into Memory</title>
+			<link>https://paulmains.com/posts/files-and-streams-part-4-memory</link>
+			<description>&lt;p&gt;In the previous part I looked at how file processing could benefit from watching directories. In this part I will be looking at introducing file manipulation during the processing. Here I work through processing various text and binary files.&lt;/p&gt;</description>
+			<enclosure url="https://raw.githubusercontent.com/mainsy/cdn/master/posts/files-and-streams/file-banner.png" length="0" type="image" />
+			<guid>https://paulmains.com/posts/files-and-streams-part-4-memory</guid>
+			<pubDate>Wed, 22 Apr 2020 00:00:00 GMT</pubDate>
+			<content:encoded>&lt;p&gt;In the previous part I looked at how file processing could benefit from watching directories. In this part I will be looking at introducing file manipulation during the processing. Here I work through processing various text and binary files.&lt;/p&gt;
+&lt;h4 id="net-methods"&gt;.NET Methods&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.file.readalltext"&gt;File.ReadAllText&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.file.writealltext"&gt;File.WriteAllText&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.file.readalllines"&gt;File.ReadAllLines&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.file.writealllines"&gt;File.WriteAllLines&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.file.appendalltext"&gt;File.AppendAllText&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.file.appendalllines"&gt;File.AppendAllLines&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.file.move"&gt;File.Move&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src="https://media.giphy.com/media/26BRL3pw98MWNOy0U/giphy.gif" class="img-fluid" alt="Let's do this" /&gt;&lt;/p&gt;
+&lt;h2 id="reading-writing-text-files"&gt;Reading &amp;amp; Writing Text Files&lt;/h2&gt;
+&lt;hr /&gt;
+&lt;p&gt;Once the file has been picked up by the file watcher the file processing begins. In this scenario we have text files that need to have text appended to them. This can happen in a couple of different places. I've edited the solution in the following ways.&lt;/p&gt;
+&lt;h3 id="reading-whole-files-into-memory"&gt;Reading Whole Files into Memory&lt;/h3&gt;
+&lt;p&gt;A new class called TextFileProcessor was added. Initially this will have some very basic processing. It will read all the text and append it with a signature. This uses the File.ReadAllText and File.WriteAllText methods. This will read the file at the defined location into memory. Once it's in memory the contents of the file can be modified. The new modified text then gets written to the new location. File processing has been completed at that point. The code below delivers on that behaviour.&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-C#"&gt;public class TextFileProcessor
+{
+	public string FilePath { get; set; }
+	public string NewFilePath { get; set; }
+	public string AppendText = $&amp;quot;{Environment.NewLine}{Environment.NewLine}&amp;quot; +
+				$&amp;quot;Best regards,{Environment.NewLine}{Environment.NewLine}&amp;quot; +
+				&amp;quot;From Paul&amp;quot;;
+
+	public TextFileProcessor(string filePath, string newFilePath)
+	{
+		FilePath = filePath;
+		NewFilePath = newFilePath;
+	}
+
+	public void Process()
+	{
+		var text = File.ReadAllText(FilePath);
+		var processedText = text + AppendText;
+		File.WriteAllText(NewFilePath, processedText);
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;In the FileProcessor there has been some modification. The ProcessTextFile Method has been removed. Then the ProcessFile Method has been modified to use the new TextFileProcessor. The file moving behaviour has been replaced with a deletion as the processing will be completely governed by the TextFileProcessor. The file name declarations have been moved up to the top of the method so that they can be used inside the switch statement.&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-C#"&gt;private void ProcessFile(string processingFilePath)
+{
+	var extension = Path.GetExtension(_filePath);
+	var finishedDir = Path.Combine(_rootPath, FinalDir);
+	Directory.CreateDirectory(finishedDir);
+
+	var finishedFileName = $&amp;quot;{Path.GetFileNameWithoutExtension(_filePath)}-{Guid.NewGuid()}{extension}&amp;quot;;
+	var finishedFilePath = Path.Combine(finishedDir, finishedFileName);
+
+	switch (extension)
+	{
+		case &amp;quot;.txt&amp;quot;:
+			var textProcessor = new TextFileProcessor(processingFilePath, finishedFilePath);
+			textProcessor.Process();
+			break;
+		default:
+			WriteLine($&amp;quot;{DateTime.Now.ToLongTimeString()} - {extension} is not a supported file type.&amp;quot;);
+			break;
+	}
+
+	WriteLine($&amp;quot;{DateTime.Now.ToLongTimeString()} - {processingFilePath} has been processed.&amp;quot;);
+	WriteLine($&amp;quot;Removing {processingFilePath}&amp;quot;);
+	File.Delete(processingFilePath);
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The draw back to this approach is that it has a bigger memory footprint which can have consequences down the line. It is more efficient to read lines into memory rather than entire files.&lt;/p&gt;
+&lt;h3 id="reading-lines-into-memory"&gt;Reading Lines into Memory&lt;/h3&gt;
+&lt;p&gt;To read lines into memory rather than the entire file we just need to use the File.ReadAllLines and File.WriteAllLines methods instead.&lt;/p&gt;
+&lt;p&gt;This is done in the TextFileProcessor. I changed the property being appended to a list of strings. The file gets read into memory line by line. Once we have the list the values get appended to the list. It then writes to the new location line by line.&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-C#"&gt;public class TextFileProcessor
+{
+	public string FilePath { get; set; }
+	public string NewFilePath { get; set; }
+	public List&amp;lt;string&amp;gt; AppendList = new List&amp;lt;string&amp;gt;
+	{
+		string.Empty,
+		string.Empty,
+		&amp;quot;Best regards,&amp;quot;,
+		string.Empty,
+		&amp;quot;From Paul&amp;quot;
+	};
+
+	public TextFileProcessor(string filePath, string newFilePath)
+	{
+		FilePath = filePath;
+		NewFilePath = newFilePath;
+	}
+
+	public void Process()
+	{
+		var lineList = File.ReadAllLines(FilePath).ToList();
+		lineList.AddRange(AppendList);
+		var lines = lineList.ToArray();
+		File.WriteAllLines(NewFilePath, lines);
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The benefit of this approach is that the entire file isn't read into memory all at once. This helps us get around issues around file size issues. We don't have to have the entire file in memory all at once we can read and write it in segments. The one draw back of this is that at some point an additional line is added. This would need to be mitigated at some point.&lt;/p&gt;
+&lt;h3 id="appending-text"&gt;Appending Text&lt;/h3&gt;
+&lt;p&gt;There's another more advisable way to append content and it's with the use of the File.AppendAllText and File.AppendAllLines methods. The below two examples would be able to replace the above Process method examples.&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-C#"&gt;File.Move(FilePath, NewFilePath);
+File.AppendAllText(NewFilePath, AppendText);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class="language-C#"&gt;File.Move(FilePath, NewFilePath);
+File.AppendAllLines(NewFilePath, AppendList);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id="encoding"&gt;Encoding&lt;/h2&gt;
+&lt;hr /&gt;
+&lt;p&gt;All of the read and write methods have an encoding parameter option. This is a class with the following encoding options.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.text.encoding.ascii"&gt;ASCII&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.text.encoding.utf8"&gt;UTF8&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.text.encoding.utf7"&gt;UTF7&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.text.encoding.utf32"&gt;UTF32&lt;/a&gt;  (little endian)&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.text.encoding.unicode"&gt;Unicode&lt;/a&gt; (UTF-16 little endian)&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.text.encoding.bigendianunicode"&gt;BigEndianUnicode&lt;/a&gt; (UTF-16 big endian)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The endianness referred here denotes whether the byter order is biggest or littlest first. Typically text files will be UTF8 which doesn't have a byte order mark. There are situations in which using different encodings is required. But in this I'm just using standard UTF-8 encoding.&lt;/p&gt;
+&lt;p&gt;ASCII is single byte character data (8 bit encoding) which is not affected by endianness. The bytes are stored in the same order always, so if you needed access to the third character in a string, you just need to access the third byte. ASCII only has 256 characters available to it with very few symbols.&lt;/p&gt;
+&lt;p&gt;Unicode is multi byte character data (7-32 bit encoding) which has various endianness. The first 128 character of unicode map to the first 128 characters of ASCII so in that regard they can be interchangeable. However due to the variety of encoding, characters aren't always read in the same way as ASCII. In UTF-8 for instance (which is the closest to ASCII), there are checks in place. If you needed to access the third character in a string, you first need to identify the first character to see if it is a one or a multi byte character (utf-8 characters can use between 1 and 4 bytes each). Then you need to do the same for the second character and then you are able to access the third character. So there are performance implications here to consider at scale. UTF-8 is capable of having 1,112,064 characters available to it. This is a concern mostly attributed to database schemas when deciding what types are needed.&lt;/p&gt;
+&lt;p&gt;Here is an &lt;a href="https://kunststube.net/encoding/"&gt;article&lt;/a&gt; I read for more background on this.&lt;/p&gt;
+&lt;h2 id="reading-writing-binary-files"&gt;Reading &amp;amp; Writing Binary Files&lt;/h2&gt;
+&lt;hr /&gt;
+&lt;p&gt;The reading and writing of text files will likely have more utility than writing binary in most basic cases. However on your computer there is more binary files than text, so there will be plenty of scenarios that entail having to read and write to a binary file.&lt;/p&gt;
+&lt;p&gt;But here is how you can do it in a basic rudimentary way. I added a new class called BinaryFileProcessor in the same way that TextFileProcessor was setup.&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-C#"&gt;public class BinaryFileProcessor
+{
+	public string FilePath { get; set; }
+	public string NewFilePath { get; set; }
+
+	public BinaryFileProcessor(string filePath, string newFilePath)
+	{
+		FilePath = filePath;
+		NewFilePath = newFilePath;
+	}
+
+	public void Process()
+	{
+		// binary process code will be here shortly
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The ProcessFile method was modified in the FileProcessor class. The BinaryFileProcessor use was added to the switch statement.&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-C#"&gt;switch (extension)
+{
+	case &amp;quot;.txt&amp;quot;:
+		var textProcessor = new TextFileProcessor(processingFilePath, finishedFilePath);
+		textProcessor.Process();
+		break;
+	case &amp;quot;.bin&amp;quot;:
+		var binaryProcessor = new BinaryFileProcessor(processingFilePath, finishedFilePath);
+		binaryProcessor.Process();
+		break;
+	default:
+		WriteLine($&amp;quot;{DateTime.Now.ToLongTimeString()} - {extension} is not a supported file type.&amp;quot;);
+		break;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;In the BinaryFileProcessor I added some code in the Process method to find largest byte and add that byte again at the end. Not exactly a real life use case, but let's just keep things simple. This works as an example for using the File.ReadAllBytes and File.WriteAllBytes methods.&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-C#"&gt;public void Process()
+{
+	var data = File.ReadAllBytes(FilePath);
+	var largest = data.Max();
+	var newData = new byte[data.Length + 1];
+	Array.Copy(data, newData, data.Length);
+	newData[newData.Length - 1] = largest;
+	File.WriteAllBytes(NewFilePath, newData);
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id="making-the-binary-file-to-process"&gt;Making the binary file to process&lt;/h3&gt;
+&lt;p&gt;A binary file isn't as straight forward to observe like a text file. You can open up a text file before and after in a text editor to see changes. For a binary file You can use Powershell to see these changes. The command that I used is &lt;code&gt;Format-Hex –Path “path”&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;But to edit the file to use as test data it's preferred to use a hex editor. I created a binary file by running this command &lt;code&gt;fsutil file createnew sasquatch.bin 5&lt;/code&gt;. This creates a binary file with a data length of 5 bytes. This doesn't have any data in it really, it needs to modified. Now that I have a binary file I edited it using &lt;a href="https://www.hhdsoftware.com/free-hex-editor"&gt;HHD Hex Editor Neo (free edition)&lt;/a&gt;. I just entered random data into the file (I probably could have just created a new bin file through HHD Hex editor also).&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://raw.githubusercontent.com/mainsy/cdn/master/posts/files-and-streams/hex-editor.png" class="img-fluid" alt="hex editor" /&gt;&lt;/p&gt;
+&lt;h3 id="running-the-process"&gt;Running the process&lt;/h3&gt;
+&lt;p&gt;The next step is to run the console application and drop the new bin file into the watched directory.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://raw.githubusercontent.com/mainsy/cdn/master/posts/files-and-streams/binary-processing.png" class="img-fluid" alt="command line" /&gt;&lt;/p&gt;
+&lt;p&gt;Once that has been done the binary file can be opened up. It should be noticed that the largest byte has been appended to the end of the file.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://raw.githubusercontent.com/mainsy/cdn/master/posts/files-and-streams/binary-after.png" class="img-fluid" alt="powershell after" /&gt;&lt;/p&gt;
+&lt;p&gt;Why someone might need to do this? Who knows? But it is a basic example of being able to programmatically alter binary files.&lt;/p&gt;
+&lt;h2 id="summary"&gt;Summary&lt;/h2&gt;
+&lt;hr /&gt;
+&lt;table class="table"&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Pros&lt;/th&gt;
+&lt;th&gt;Cons&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Simple logic&lt;/td&gt;
+&lt;td&gt;Slow processing&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Simple to write&lt;/td&gt;
+&lt;td&gt;Not scalable (will crash if file too large)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Simple to maintain&lt;/td&gt;
+&lt;td&gt;No random access / seeking&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;In the next part I talk about streams or memory mapped files... I haven't decided yet.&lt;/p&gt;
+&lt;p&gt;Good night!&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://media.giphy.com/media/mguPrVJAnEHIY/giphy.gif" class="img-fluid" alt="sleepy dog" /&gt;&lt;/p&gt;
+</content:encoded>
+		</item>
+		<item>
+			<title>Files and Streams Part 3 - Watching Files &amp; Directories</title>
+			<link>https://paulmains.com/posts/files-and-streams-part-3-watching</link>
+			<description>&lt;p&gt;The previous part was about how to &lt;a href="/posts/files-and-streams-part-2-management"&gt;&lt;strong&gt;manage files and directories&lt;/strong&gt;&lt;/a&gt;. In this part, I essentially refactor the application to operate by watching the files and directories for changes rather than running the file processing a single time. The result of the monitoring will trigger the processing whenever a change event is raised.&lt;/p&gt;</description>
+			<enclosure url="https://raw.githubusercontent.com/mainsy/cdn/master/posts/files-and-streams/file-banner.png" length="0" type="image" />
+			<guid>https://paulmains.com/posts/files-and-streams-part-3-watching</guid>
+			<pubDate>Tue, 21 Apr 2020 00:00:00 GMT</pubDate>
+			<content:encoded>&lt;p&gt;The previous part was about how to &lt;a href="/posts/files-and-streams-part-2-management"&gt;&lt;strong&gt;manage files and directories&lt;/strong&gt;&lt;/a&gt;. In this part, I essentially refactor the application to operate by watching the files and directories for changes rather than running the file processing a single time. The result of the monitoring will trigger the processing whenever a change event is raised.&lt;/p&gt;
+&lt;h4 id="net-methods"&gt;.NET Methods&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.directory.exists"&gt;Directory.Exists&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.directory.enumeratefiles"&gt;Directory.EnumerateFiles&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.file.exists"&gt;File.Exists&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.collections.concurrent.concurrentdictionary-2.tryadd"&gt;ConcurrentDictionary.TryAdd&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.collections.concurrent.concurrentdictionary-2.tryremove"&gt;ConcurrentDictionary.TryRemove&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.timespan.fromseconds"&gt;TimeSpan.FromSeconds&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.console.writeline"&gt;Console.WriteLine&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.console.read"&gt;Console.Read&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.runtime.caching.memorycache.add"&gt;MemoryCache.Add&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.string.isnullorempty"&gt;String.IsNullOrEmpty&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src="https://media.giphy.com/media/JpRSD9UznNnFGO8Mwt/giphy-downsized.gif" class="img-fluid" alt="ready dog" /&gt;&lt;/p&gt;
+&lt;p&gt;Let's do this!&lt;/p&gt;
+&lt;h2 id="filesystemwatcher"&gt;FileSystemWatcher&lt;/h2&gt;
+&lt;hr /&gt;
+&lt;p&gt;&lt;img src="https://media.giphy.com/media/zQc8STzaOlJ3q/giphy.gif" class="img-fluid" alt="Arnie's watching you" /&gt;&lt;/p&gt;
+&lt;p&gt;The &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.filesystemwatcher"&gt;&lt;strong&gt;FileSystemWatcher&lt;/strong&gt;&lt;/a&gt; class when instantiated and set to raise events (by setting EnableRaisingEvents to true). This will watch a specified directory like a hawk. The properties available to change are the following (I've crossed out the properties that I didn't use).&lt;/p&gt;
+&lt;h4 id="properties"&gt;Properties&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.filesystemwatcher.enableraisingevents"&gt;EnableRaisingEvents&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.filesystemwatcher.filter"&gt;Filter&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.filesystemwatcher.path"&gt;Path&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.filesystemwatcher.internalbuffersize"&gt;InternalBufferSize&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.filesystemwatcher.notifyfilter"&gt;NotifyFilter&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.filesystemwatcher.includesubdirectories"&gt;IncludeSubdirectories&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;del&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.filesystemwatcher.site"&gt;Site&lt;/a&gt;&lt;/del&gt;&lt;/li&gt;
+&lt;li&gt;&lt;del&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.filesystemwatcher.synchronizingobject"&gt;SynchronizingObject&lt;/a&gt;&lt;/del&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="initial-implementation"&gt;Initial Implementation&lt;/h2&gt;
+&lt;hr /&gt;
+&lt;p&gt;Initially the program processed files sequentially based on when the event is raised. This can present quite a few problems and is too rudimentary of a solution to be scalable. It will use the default buffer size and default filter (i.e everything).&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-C#"&gt;private static void Main(string[] args)
+{
+	WriteLine(&amp;quot;Parsing command line options&amp;quot;);
+
+	var directory = args[0];
+
+	if (Directory.Exists(directory))
+	{
+		WriteLine($&amp;quot;Currently watching {directory}.&amp;quot;);
+
+		using (var fileWatcher = new FileSystemWatcher(directory))
+		{
+			fileWatcher.IncludeSubdirectories = false;
+			fileWatcher.Created += FileCreated;
+			fileWatcher.Changed += FileChanged;
+			fileWatcher.Deleted += FileDeleted;
+			fileWatcher.Renamed += FileRenamed;
+			fileWatcher.Error += WatcherError;
+			fileWatcher.EnableRaisingEvents = true;
+			WriteLine(&amp;quot;Press enter to quit.&amp;quot;);
+			Read();
+		}
+	}
+	else
+	{
+		WriteLine($&amp;quot;Error: {directory} doesn't exist.&amp;quot;);
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Multiple events being monitored to track file manipulations to then perform file manipulations on files within the monitored directory can be a recipe for disaster if not handled correctly... and somewhat of a mouth full to say.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://media.giphy.com/media/aMfUDqXOgVyQE/giphy.gif" class="img-fluid" alt="mouth full" /&gt;&lt;/p&gt;
+&lt;h4 id="event-mappings"&gt;Event Mappings&lt;/h4&gt;
+&lt;p&gt;Behaviour was mapped against the following events. The operating system will alert the &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.filesystemwatcher"&gt;&lt;strong&gt;FileSystemWatcher&lt;/strong&gt;&lt;/a&gt; buffer of these changes. The code was setup to only process files on file creation and file change.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.filesystemwatcher.created"&gt;Created&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.filesystemwatcher.changed"&gt;Changed&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.filesystemwatcher.deleted"&gt;Deleted&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.filesystemwatcher.renamed"&gt;Renamed&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.filesystemwatcher.error"&gt;Error&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Once a change event has been raised it will report the change type and perform the file processing on create and change.&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-C#"&gt;private static void FileCreated(object sender, FileSystemEventArgs e)
+{
+	WriteLine($&amp;quot;{e.Name} has been created. - {e.ChangeType}&amp;quot;);
+	var fileProcessor = new FileProcessor(e.FullPath);
+	fileProcessor.Process();
+}
+
+private static void FileChanged(object sender, FileSystemEventArgs e)
+{
+	WriteLine($&amp;quot;{e.Name} has been changed. - {e.ChangeType}&amp;quot;);
+	var fileProcessor = new FileProcessor(e.FullPath);
+	fileProcessor.Process();
+}
+
+private static void FileDeleted(object sender, FileSystemEventArgs e)
+{
+	WriteLine($&amp;quot;{e.Name} has been deleted. - {e.ChangeType}&amp;quot;);
+}
+
+private static void FileRenamed(object sender, RenamedEventArgs e)
+{
+	WriteLine($&amp;quot;{e.OldName} has been renamed to {e.Name}. - {e.ChangeType}&amp;quot;);
+}
+
+private static void WatcherError(object sender, ErrorEventArgs e)
+{
+	WriteLine($&amp;quot;Error: File watcher has exploded. Exception: {e.GetException()}&amp;quot;);
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;When running this application it is very noticeable that there is a flurry of activity, as events hit the buffer. The issue is that there is just too much being raised. You would not describe the frequency of file processing to be efficient. To remedy this the program is in dire need of some filtering.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://media.giphy.com/media/EPf0wbRlhAO8KGeVFA/giphy.gif" class="img-fluid" alt="cat filtering" /&gt;&lt;/p&gt;
+&lt;h2 id="filtering"&gt;Filtering&lt;/h2&gt;
+&lt;hr /&gt;
+&lt;p&gt;To make the file processing occur only when it is needed, the use of the NotifyFilter property is needed. We will just need to pay attention to the creation of the file or whether the file name or last write is the cause of the change.&lt;/p&gt;
+&lt;table class="table"&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.notifyfilters#fields"&gt;NotifyFilters&lt;/a&gt; Fields&lt;/th&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Attributes&lt;/td&gt;
+&lt;td&gt;4&lt;/td&gt;
+&lt;td&gt;The attributes of the file or folder.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;CreationTime&lt;/td&gt;
+&lt;td&gt;64&lt;/td&gt;
+&lt;td&gt;The time the file or folder was created.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;DirectoryName&lt;/td&gt;
+&lt;td&gt;2&lt;/td&gt;
+&lt;td&gt;The name of the directory.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;FileName&lt;/td&gt;
+&lt;td&gt;1&lt;/td&gt;
+&lt;td&gt;The name of the file.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;LastAccess&lt;/td&gt;
+&lt;td&gt;32&lt;/td&gt;
+&lt;td&gt;The date the file or folder was last opened.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;LastWrite&lt;/td&gt;
+&lt;td&gt;16&lt;/td&gt;
+&lt;td&gt;The date the file or folder last had anything written to it.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Security&lt;/td&gt;
+&lt;td&gt;256&lt;/td&gt;
+&lt;td&gt;The security settings of the file or folder.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Size&lt;/td&gt;
+&lt;td&gt;8&lt;/td&gt;
+&lt;td&gt;The size of the file or folder.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;In addition of adding a notify filter the InternalBufferSize and the Filter properties were modified. The buffer size has been increased to 64kb and the filter was setup to only watch text files. The buffer is likely far too big, but I was just testing to see if I could see any obvious implications. It should be noted that the buffer size has some restrictions to acknowledge. It is not to be larger than 64kb and no smaller than 4kb. It is best for the buffer size to be a multiple of 4. Increasing the buffer size is expensive due to it being non-paged memory that will not be swapped out to disk. It is best to keep the buffer as small as possible. A way to ensure this is the use of notification filters.&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-C#"&gt;private static void Main(string[] args)
+{
+	WriteLine(&amp;quot;Parsing command line options&amp;quot;);
+
+	var directory = args[0];
+
+	if (Directory.Exists(directory))
+	{
+		WriteLine($&amp;quot;Currently watching {directory}.&amp;quot;);
+
+		using (var fileWatcher = new FileSystemWatcher(directory))
+		{
+			fileWatcher.IncludeSubdirectories = false;
+			fileWatcher.InternalBufferSize = 65536; // 64kb which is the maximum
+			fileWatcher.Filter = &amp;quot;*.txt&amp;quot;;
+			fileWatcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite;
+
+			fileWatcher.Created += FileCreated;
+			fileWatcher.Changed += FileChanged;
+			fileWatcher.Deleted += FileDeleted;
+			fileWatcher.Renamed += FileRenamed;
+			fileWatcher.Error += WatcherError;
+			fileWatcher.EnableRaisingEvents = true;
+			WriteLine(&amp;quot;Press enter to quit.&amp;quot;);
+			Read();
+		}
+	}
+	else
+	{
+		WriteLine($&amp;quot;Error: {directory} doesn't exist.&amp;quot;);
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;When running the application now, it can be noticed that there is much less activity.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://media.giphy.com/media/3ohzdIuqJoo8QdKlnW/giphy-downsized.gif" class="img-fluid" alt="yes" /&gt;&lt;/p&gt;
+&lt;p&gt;However this approach is still risky and prone to bugs and can result in file change duplicates if the file changes are too numerous. If only there was a way to restrict the processing to a happen a single time. If only there was a way to have a list of unique files that wasn't added to numerous times by other events.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://media.giphy.com/media/26xBI73gWquCBBCDe/giphy.gif" class="img-fluid" alt="thinking" /&gt;&lt;/p&gt;
+&lt;h2 id="concurrency"&gt;Concurrency&lt;/h2&gt;
+&lt;hr /&gt;
+&lt;p&gt;Use of a concurrent dictionary can help. Even though this is introducing concurrency the files aren't being processed concurrently (this confusion isn't helped by my method naming choices). Only the list of files are being stored concurrently. The processing will still occur sequentially at a determined interval. Two usings were added to the program. The &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.collections.concurrent"&gt;&lt;strong&gt;Concurrent&lt;/strong&gt;&lt;/a&gt; namespace is so the &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.collections.concurrent.concurrentdictionary-2"&gt;&lt;strong&gt;ConcurrentDictionary&lt;/strong&gt;&lt;/a&gt; generic is made available. The &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.threading?view=netframework-4.8"&gt;&lt;strong&gt;Threading&lt;/strong&gt;&lt;/a&gt; namespace is used to get access to the &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.threading.timer"&gt;&lt;strong&gt;Timer&lt;/strong&gt;&lt;/a&gt; class.&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-C#"&gt;using System.Collections.Concurrent;
+using System.Threading;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now that these are available, the &lt;code&gt;_files&lt;/code&gt; property is added along with the &lt;code&gt;timer&lt;/code&gt; variable. By adding these, the files get processed every 1000 milliseconds. The methods attributed to the &amp;quot;&lt;strong&gt;Created&lt;/strong&gt;&amp;quot; and &amp;quot;&lt;strong&gt;Changed&lt;/strong&gt;&amp;quot; events, were changed to use methods that add to the &lt;code&gt;_files&lt;/code&gt; property.&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-C#"&gt;private static ConcurrentDictionary&amp;lt;string, string&amp;gt; _files = new ConcurrentDictionary&amp;lt;string, string&amp;gt;();
+
+private static void Main(string[] args)
+{
+	WriteLine(&amp;quot;Parsing command line options&amp;quot;);
+
+	var directory = args[0];
+
+	if (Directory.Exists(directory))
+	{
+		WriteLine($&amp;quot;Currently watching {directory}.&amp;quot;);
+
+		using (var fileWatcher = new FileSystemWatcher(directory))
+		using(var timer = new Timer(ProcessFilesConcurrently, null, 0, 1000))
+		{
+			fileWatcher.IncludeSubdirectories = false;
+			fileWatcher.InternalBufferSize = 65536; // 64kb which is the maximum
+			fileWatcher.Filter = &amp;quot;*.txt&amp;quot;;
+			fileWatcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite;
+			fileWatcher.Created += FileCreatedConcurrently;
+			fileWatcher.Changed += FileChangedConcurrently;
+			fileWatcher.Deleted += FileDeleted;
+			fileWatcher.Renamed += FileRenamed;
+			fileWatcher.Error += WatcherError;
+			fileWatcher.EnableRaisingEvents = true;
+			WriteLine(&amp;quot;Press enter to quit.&amp;quot;);
+			Read();
+		}
+	}
+	else
+	{
+		WriteLine($&amp;quot;Error: {directory} doesn't exist.&amp;quot;);
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Here is where the files are collected. Because it is now using a concurrent dictionary, if the&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-C#"&gt;private static void FileCreatedConcurrently(object sender, FileSystemEventArgs e)
+{
+   WriteLine($&amp;quot;{e.Name} has been created. - {e.ChangeType}&amp;quot;);
+   _files.TryAdd(e.FullPath, e.FullPath);
+}
+
+private static void FileChangedConcurrently(object sender, FileSystemEventArgs e)
+{
+   WriteLine($&amp;quot;{e.Name} has been changed. - {e.ChangeType}&amp;quot;);
+   _files.TryAdd(e.FullPath, e.FullPath);
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Here is where the files are processed. It will iterate through the files and attempt to remove from the list before processing the file.&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-C#"&gt;private static void ProcessFilesConcurrently(object stateInfo)
+{
+   foreach (var name in _files.Keys)
+   {
+       // underscore means value is discarded
+       if (!_files.TryRemove(name, out _))
+       {
+           continue;
+       }
+
+       var fileProcessor = new FileProcessor(name);
+       fileProcessor.Process();
+   }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This approach is slightly better than it was previously, as there is less likelihood of inadvertent processing duplications occurring. The watcher may fire more than one change event for the file but the file will only get processed once. However, there is a tiny risk when using the concurrent dictionary alongside a timer. There is a small possibility that the watcher will fire multiple events and the first will be before the timer interval and another will be after. This will result in the file processing occurring twice. It is a tiny problem that would likely become a much bigger issue when scaling up. To lessen this as an issue the timer interval could be extended, but really, that's just wrapping it in tape and running away. If only there as a way to provide a time for each file to wait for changes events to trickle in. It wouldn't even need to be a long time... maybe just a second or two.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://media.giphy.com/media/1LmBFphV4XNSw/giphy.gif" class="img-fluid" alt="ron swanson confused" /&gt;&lt;/p&gt;
+&lt;p&gt;If only...&lt;/p&gt;
+&lt;h2 id="processing-from-a-cache"&gt;Processing from a cache!&lt;/h2&gt;
+&lt;hr /&gt;
+&lt;p&gt;The bugs that occur in the concurrent dictionary can be resolved by using a cache instead. By using a cache, you can specify an expiration on each file being added. There will be a noticeable difference in the output as the cache only checks for expired items every 20 seconds. However, it is the more robust solution. So let's rip that concurrency dictionary and timer out and add some new methods.&lt;/p&gt;
+&lt;p&gt;To use the &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.runtime.caching.memorycache"&gt;&lt;strong&gt;MemoryCache&lt;/strong&gt;&lt;/a&gt; class we need to use the &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.runtime.caching"&gt;&lt;strong&gt;Caching&lt;/strong&gt;&lt;/a&gt; namespace.&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-C#"&gt;using System.Runtime.Caching;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.collections.concurrent.concurrentdictionary-2"&gt;&lt;strong&gt;ConcurrentDictionary&lt;/strong&gt;&lt;/a&gt; has been replaced with a &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.runtime.caching.memorycache"&gt;&lt;strong&gt;MemoryCache&lt;/strong&gt;&lt;/a&gt;. The timer has now been removed. The Main method now sets up the &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.filesystemwatcher"&gt;&lt;strong&gt;FileSystemWatcher&lt;/strong&gt;&lt;/a&gt; and binds the appropriate events. It doesn't do any processing directly. The new methods were created with this processing behaviour.&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-C#"&gt;private static MemoryCache _files = MemoryCache.Default;
+
+private static void Main(string[] args)
+{
+	WriteLine(&amp;quot;Parsing command line options&amp;quot;);
+
+	var directory = args[0];
+
+	if (Directory.Exists(directory))
+	{
+		WriteLine($&amp;quot;Currently watching {directory}.&amp;quot;);
+
+		using (var fileWatcher = new FileSystemWatcher(directory))
+		{
+			fileWatcher.IncludeSubdirectories = false;
+			fileWatcher.InternalBufferSize = 65536; // 64kb which is the maximum
+			fileWatcher.Filter = &amp;quot;*.txt&amp;quot;;
+			fileWatcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite;
+			fileWatcher.Created += FileCreatedCaching;
+			fileWatcher.Changed += FileChangedCaching;
+			fileWatcher.Deleted += FileDeleted;
+			fileWatcher.Renamed += FileRenamed;
+			fileWatcher.Error += WatcherError;
+			fileWatcher.EnableRaisingEvents = true;
+			WriteLine(&amp;quot;Press enter to quit.&amp;quot;);
+			Read();
+		}
+	}
+	else
+	{
+		WriteLine($&amp;quot;Error: {directory} doesn't exist.&amp;quot;);
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Two new methods were setup purely to add the file to the cache.&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-C#"&gt;private static void FileCreatedCaching(object sender, FileSystemEventArgs e)
+{
+	WriteLine($&amp;quot;{e.Name} has been created. - {e.ChangeType}&amp;quot;);
+	AddToCache(e.FullPath);
+}
+
+private static void FileChangedCaching(object sender, FileSystemEventArgs e)
+{
+	WriteLine($&amp;quot;{e.Name} has been changed. - {e.ChangeType}&amp;quot;);
+	AddToCache(e.FullPath);
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The new &lt;strong&gt;AddToCache&lt;/strong&gt; method sets up a new cache item and sets the method to use when the cache item expires. The expiration is set to 2 seconds, (as this is the minimum required). Once the item is added to the cache, it will quickly expire and the &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.runtime.caching.memorycache"&gt;&lt;strong&gt;MemoryCache&lt;/strong&gt;&lt;/a&gt; will periodically (every 20 seconds) check for expired items. Once an item expires, it will run the &lt;strong&gt;ProcessFileFromCache&lt;/strong&gt; method.&lt;/p&gt;
+&lt;p&gt;The &lt;strong&gt;ProcessFileFromCache&lt;/strong&gt; method exists to check that the item was removed for the acceptable reason and run the file processor.&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-C#"&gt;private static void AddToCache(string fullPath)
+{
+	var item = new CacheItem(fullPath, fullPath);
+
+	var policy = new CacheItemPolicy
+	{
+		RemovedCallback = ProcessFileFromCache,
+		SlidingExpiration = TimeSpan.FromSeconds(2)
+	};
+
+	_files.Add(item, policy);
+}
+
+private static void ProcessFileFromCache(CacheEntryRemovedArguments args)
+{
+	WriteLine($&amp;quot;{args.CacheItem.Key} has been removed from cache, due to {args.RemovedReason}&amp;quot;);
+
+	if (args.RemovedReason == CacheEntryRemovedReason.Expired)
+	{
+		var fileProcessor = new FileProcessor(args.CacheItem.Key);
+		fileProcessor.Process();
+	}
+	else
+	{
+		WriteLine($&amp;quot;{args.CacheItem.Key} has been removed from cache, due to unknown reason.&amp;quot;);
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;There was some additional code added to make this work on files that existed prior to the app start. The &lt;strong&gt;ProcessingExistingFiles&lt;/strong&gt; method was set up to enumerate through the existing files using the &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.directory.enumeratefiles"&gt;&lt;strong&gt;EnumerateFiles&lt;/strong&gt;&lt;/a&gt; method and add it to the file cache.&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-C#"&gt;private static void Main(string[] args)
+{
+	WriteLine($&amp;quot;{DateTime.Now.ToLongTimeString()} - Parsing command line options&amp;quot;);
+
+	var directory = args[0];
+
+	if (Directory.Exists(directory))
+	{
+		WriteLine($&amp;quot;{DateTime.Now.ToLongTimeString()} - Currently watching {directory}.&amp;quot;);
+		ProcessExistingFiles(directory);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class="language-C#"&gt;private static void ProcessExistingFiles(string directory)
+{
+	WriteLine($&amp;quot;{DateTime.Now.ToLongTimeString()} - Processing {directory} for files that already exist.&amp;quot;);
+
+	foreach (var path in Directory.EnumerateFiles(directory))
+	{
+		WriteLine($&amp;quot;{DateTime.Now.ToLongTimeString()} - Processing {path}.&amp;quot;);
+		AddToCache(path);
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I have went ahead and added timestamps to all of the outputs to illustrate the time it takes. As there will be a noticeable difference. I deleted the contents of the folder and added all of the text files to this before running the application (it has to be this way to avoid an issue that will be cleared up next).&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://raw.githubusercontent.com/mainsy/cdn/master/posts/files-and-streams/directory-cache-output.png" class="img-fluid" alt="command output" /&gt;&lt;/p&gt;
+&lt;p&gt;Its clear when the application starts and when the processing occurs (near enough to the 20 seconds that was predicted).&lt;/p&gt;
+&lt;h2 id="cleaning-up"&gt;Cleaning up&lt;/h2&gt;
+&lt;hr /&gt;
+&lt;h4 id="issues-with-missing-files"&gt;Issues with missing files&lt;/h4&gt;
+&lt;p&gt;The reason why I had to run the application in that specific way (with the files already existing), was due to an error that happens when adding multiple new files.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://raw.githubusercontent.com/mainsy/cdn/master/posts/files-and-streams/file-not-found-error.png" class="img-fluid" alt="file not found error" /&gt;&lt;/p&gt;
+&lt;p&gt;This is due to the processing directory being deleted once the file has been processed. To fix this I just removed that specific functionality in the file processor. Below I just commented that line out.&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-C#"&gt;// FileProcessor.cs
+public void Process()
+{
+	WriteLine($&amp;quot;Begin processing of {_filePath}&amp;quot;);
+
+	// Check if exists using the &amp;quot;Exists&amp;quot; Static Method
+	if (!File.Exists(_filePath))
+	{
+		WriteLine($&amp;quot;Error: {_filePath} does not exist.&amp;quot;);
+		return;
+	}
+
+	BackupOriginal();
+
+	var processingFilePath = MoveToProcessing();
+
+	if (string.IsNullOrEmpty(processingFilePath))
+	{
+		return;
+	}
+
+	ProcessFile(processingFilePath);
+
+	// Need to stop the deleting of the processing folder
+	//RemoveProcessing(processingFilePath);
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now it should work.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://media.giphy.com/media/IgLnqEAUh3XP6dagEk/giphy-downsized.gif" class="img-fluid" alt="happy dog" /&gt;&lt;/p&gt;
+&lt;h2 id="summary"&gt;Summary&lt;/h2&gt;
+&lt;hr /&gt;
+&lt;p&gt;This post has gone through the process of changing the application produced in &lt;a href="/posts/files-and-streams-part-2-management"&gt;&lt;strong&gt;Part 2&lt;/strong&gt;&lt;/a&gt; into an application that watches a directory for changes. There was an attempt to use a &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.threading.timer"&gt;&lt;strong&gt;Timer&lt;/strong&gt;&lt;/a&gt; alongside a &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.collections.concurrent.concurrentdictionary-2"&gt;&lt;strong&gt;ConcurrentDictionary&lt;/strong&gt;&lt;/a&gt;, but that wasn't sufficient. It was then changed to use a &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.runtime.caching.memorycache"&gt;&lt;strong&gt;MemoryCache&lt;/strong&gt;&lt;/a&gt;. This may not be the conventional way to use the &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.runtime.caching.memorycache"&gt;&lt;strong&gt;MemoryCache&lt;/strong&gt;&lt;/a&gt;. But the expiration callback behaviour is useful in the current context. The code for this can be seen on my &lt;a href=""&gt;&lt;strong&gt;GitHub&lt;/strong&gt;&lt;/a&gt; (it is DataProcessor2).&lt;/p&gt;
+&lt;p&gt;In the next Part, I'll expand on &lt;a href="/posts/files-and-streams-part-4-memory"&gt;&lt;strong&gt;reading files into memory&lt;/strong&gt;&lt;/a&gt;, as it will be quite useful if the file processing actually did something with the files.&lt;/p&gt;
+&lt;p&gt;But for now.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://media.giphy.com/media/4YFcrXwpjeMWk/giphy-downsized.gif" class="img-fluid" alt="tired dog" /&gt;&lt;/p&gt;
+&lt;p&gt;I'm done...&lt;/p&gt;
+</content:encoded>
+		</item>
+		<item>
+			<title>Files and Streams Part 2 - Managing Files &amp; Directories</title>
+			<link>https://paulmains.com/posts/files-and-streams-part-2-management</link>
+			<description>&lt;p&gt;The previous part was a brief &lt;a href="/posts/files-and-streams-part-1-overview"&gt;&lt;strong&gt;overview&lt;/strong&gt;&lt;/a&gt; and links to other parts. In this section I'm providing an example of basic file and directory management within a console application. Essentially setting up a desired directory structure and then moving or removing files depending on the required behaviour. This is made possible by three specific &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io"&gt;&lt;strong&gt;System.IO&lt;/strong&gt;&lt;/a&gt; classes.&lt;/p&gt;</description>
+			<enclosure url="https://raw.githubusercontent.com/mainsy/cdn/master/posts/files-and-streams/file-banner.png" length="0" type="image" />
+			<guid>https://paulmains.com/posts/files-and-streams-part-2-management</guid>
+			<pubDate>Mon, 20 Apr 2020 00:00:00 GMT</pubDate>
+			<content:encoded>&lt;p&gt;The previous part was a brief &lt;a href="/posts/files-and-streams-part-1-overview"&gt;&lt;strong&gt;overview&lt;/strong&gt;&lt;/a&gt; and links to other parts. In this section I'm providing an example of basic file and directory management within a console application. Essentially setting up a desired directory structure and then moving or removing files depending on the required behaviour. This is made possible by three specific &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io"&gt;&lt;strong&gt;System.IO&lt;/strong&gt;&lt;/a&gt; classes.&lt;/p&gt;
+&lt;h4 id="net-methods"&gt;.NET Methods&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.file.exists"&gt;File.Exists&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.file.copy"&gt;File.Copy&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.file.move"&gt;File.Move&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.directory.exists"&gt;Directory.Exists&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.directory.createdirectory"&gt;Directory.CreateDirectory&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.directory.delete"&gt;Directory.Delete&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.directory.getfiles"&gt;Directory.GetFiles&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.path.combine"&gt;Path.Combine&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.path.getfilename"&gt;Path.GetFileName&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.path.getfilenamewithoutextension"&gt;Path.GetFileNameWithoutExtension&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.path.getdirectoryname"&gt;Path.GetDirectoryName&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.path.getextension"&gt;Path.GetExtension&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.path.changeextension"&gt;Path.ChangeExtension&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.console.readline"&gt;Console.ReadLine&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.console.writeline"&gt;Console.WriteLine&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.guid.newguid"&gt;Guid.NewGuid&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.string.isnullorempty"&gt;String.IsNullOrEmpty&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src="https://media.giphy.com/media/CjmvTCZf2U3p09Cn0h/giphy-downsized.gif" class="img-fluid" alt="ready cat" /&gt;&lt;/p&gt;
+&lt;p&gt;Lets do this!&lt;/p&gt;
+&lt;h2 id="setup"&gt;Setup&lt;/h2&gt;
+&lt;hr /&gt;
+&lt;p&gt;To start I created a &lt;strong&gt;.NET framework&lt;/strong&gt; console app project (.net 4.8). So I have created a command line application that takes 2 arguments &amp;quot;&lt;strong&gt;-f&lt;/strong&gt;&amp;quot; and &amp;quot;&lt;strong&gt;-d&lt;/strong&gt;&amp;quot;. If you enter &amp;quot;&lt;strong&gt;-f&lt;/strong&gt;&amp;quot; it will run the &lt;strong&gt;single file&lt;/strong&gt; process and if &amp;quot;&lt;strong&gt;-d&lt;/strong&gt;&amp;quot; is entered the &lt;strong&gt;multi file&lt;/strong&gt; process is started (file and directory).&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-C#"&gt;private static void Main(string[] args)
+{
+	var command = args[0];
+
+	switch (command)
+	{
+		switch (command)
+		{
+			case &amp;quot;-f&amp;quot;:
+				RunFileCommand(args[1]);
+				break;
+			case &amp;quot;-d&amp;quot;:
+				RunDirectoryCommand(args[1], args[2]);
+				break;
+			default:
+				WriteLine(&amp;quot;Invalid command line options&amp;quot;);
+				break;
+		}
+	}
+
+	WriteLine(&amp;quot;Press enter key to quit.&amp;quot;);
+	ReadLine();
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The &lt;strong&gt;single file&lt;/strong&gt; process will output a message and begin the file processing for a single item path.&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-C#"&gt;private static void RunFileCommand(string path)
+{
+	WriteLine($&amp;quot;Single file {path} selected&amp;quot;);
+	var fileProcessor = new FileProcessor(path);
+	fileProcessor.Process();
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The &lt;strong&gt;multi file&lt;/strong&gt; process will output relevant messages, iterate through all the text files and perform the file process on each of them. At this point, this is the first time a &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io"&gt;&lt;strong&gt;System.IO&lt;/strong&gt;&lt;/a&gt; method is used, utilising the &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.directory"&gt;&lt;strong&gt;Directory&lt;/strong&gt;&lt;/a&gt; class. Here the &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.directory.getfiles"&gt;&lt;strong&gt;GetFiles&lt;/strong&gt;&lt;/a&gt; method will provide a string array of files in the provided path.&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-C#"&gt;private static void RunDirectoryCommand(string path, string type)
+{
+	WriteLine($&amp;quot;Directory {path} selected for {type} files&amp;quot;);
+	switch (type)
+	{
+		case &amp;quot;txt&amp;quot;:
+			var textFiles = Directory.GetFiles(path, &amp;quot;*.txt&amp;quot;);
+			foreach (var textFilePath in textFiles)
+			{
+				var fileProcessor = new FileProcessor(textFilePath);
+				fileProcessor.Process();
+			}
+
+			break;
+		default:
+			WriteLine($&amp;quot;Error: {type} is not a supported file type.&amp;quot;);
+			return;
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The &lt;strong&gt;File Processor&lt;/strong&gt; is a simple class that requires a path passed into it. It will throw an exception if no path value is provided. It determines the file name and parent directory from this path value in the constructor. It does this using the &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.path.getfilename"&gt;&lt;strong&gt;GetFileName&lt;/strong&gt;&lt;/a&gt; and &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.path.getdirectoryname"&gt;&lt;strong&gt;GetDirectoryName&lt;/strong&gt;&lt;/a&gt; methods.&lt;/p&gt;
+&lt;p&gt;Once this class has been instantiated the &lt;strong&gt;Process&lt;/strong&gt; method can be ran. The &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.file"&gt;&lt;strong&gt;File&lt;/strong&gt;&lt;/a&gt; class is used to check if the file actually exists using the &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.file.exists"&gt;&lt;strong&gt;Exists&lt;/strong&gt;&lt;/a&gt; method (quite self-explanatory really). Currently this behaviour just outputs messages to the console and checks for the existence of a file.&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-C#"&gt;internal class FileProcessor
+{
+	private const string OriginalDir = &amp;quot;original&amp;quot;;
+	private const string ProcessDir = &amp;quot;processing&amp;quot;;
+	private const string FinalDir = &amp;quot;processed&amp;quot;;
+
+	private readonly string _filePath = string.Empty;
+	private readonly string _rootPath = string.Empty;
+	private readonly string _fileName = string.Empty; 
+
+	public FileProcessor()
+	{
+		throw new ArgumentException(&amp;quot;FileProcessor must be instantiated with path parameter.&amp;quot;);
+	}
+
+	public FileProcessor(string path)
+	{
+		_filePath = path;
+		_fileName = Path.GetFileName(_filePath);
+		_rootPath = Path.GetDirectoryName(_filePath);
+	}
+
+	public void Process()
+	{
+		WriteLine($&amp;quot;Begin processing of {_filePath}&amp;quot;);
+
+		if (!File.Exists(_filePath))
+		{
+			WriteLine($&amp;quot;Error: {_filePath} does not exist.&amp;quot;);
+			return;
+		}
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id="backup-original"&gt;Backup Original&lt;/h2&gt;
+&lt;hr /&gt;
+&lt;p&gt;The first stage of this process needs to take the referenced file and back it up to a folder. In the &lt;strong&gt;Process&lt;/strong&gt; method, it uses a new method called &lt;strong&gt;BackupOriginal&lt;/strong&gt;.&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-C#"&gt;public void Process()
+{
+	WriteLine($&amp;quot;Begin processing of {_filePath}&amp;quot;);
+
+	if (!File.Exists(_filePath))
+	{
+		WriteLine($&amp;quot;Error: {_filePath} does not exist.&amp;quot;);
+		return;
+	}
+
+	BackupOriginal();
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The &lt;strong&gt;BackupOriginal&lt;/strong&gt; method utilises the &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.path"&gt;&lt;strong&gt;Path&lt;/strong&gt;&lt;/a&gt;, &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.directory"&gt;&lt;strong&gt;Directory&lt;/strong&gt;&lt;/a&gt; and &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.file"&gt;&lt;strong&gt;File&lt;/strong&gt;&lt;/a&gt; &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io"&gt;&lt;strong&gt;System.IO&lt;/strong&gt;&lt;/a&gt; classes.&lt;/p&gt;
+&lt;p&gt;The &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.path.combine"&gt;&lt;strong&gt;Combine&lt;/strong&gt;&lt;/a&gt; method requires an absolute path as its first argument then any subsequent string values will be combined to it, to produce a new path. This method has overloads that will combine up to four strings or a single string array.&lt;/p&gt;
+&lt;p&gt;The &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.directory.createdirectory"&gt;&lt;strong&gt;CreateDirectory&lt;/strong&gt;&lt;/a&gt; method will take a path and create it, if it does not already exist. If the path already exists it will not throw an error it will just return the directory that already exists as a &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.directoryinfo"&gt;&lt;strong&gt;DirectoryInfo&lt;/strong&gt;&lt;/a&gt; object. So this will ensure there is a directory to work with.&lt;/p&gt;
+&lt;p&gt;The &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.file.copy"&gt;&lt;strong&gt;Copy&lt;/strong&gt;&lt;/a&gt; method takes a path, a destination path and a boolean to decide if items can be overwritten during the copy.&lt;/p&gt;
+&lt;p&gt;This method will make sure the directory exists to back up the original item to and then copy the item to this declared directory. In the class, the name of this folder is declared as &amp;quot;&lt;strong&gt;original&lt;/strong&gt;&amp;quot;.&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-C#"&gt;private void BackupOriginal()
+{
+	var originalDir = Path.Combine(_rootPath, OriginalDir);
+
+	Directory.CreateDirectory(originalDir);
+
+	var tempFilePath = Path.Combine(originalDir, _fileName);
+
+	WriteLine($&amp;quot;Copying {_filePath} to {tempFilePath}&amp;quot;);
+
+	File.Copy(sourceFileName:_filePath, destFileName:tempFilePath, overwrite:true);
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id="move-to-processing"&gt;Move to Processing&lt;/h2&gt;
+&lt;hr /&gt;
+&lt;p&gt;The second stage of this process will take the referenced file and move it to the processing folder. The &lt;strong&gt;Process&lt;/strong&gt; method has been modified to use the new &lt;strong&gt;MoveToProcessing&lt;/strong&gt; method. This will return the location of the file to be processed in the new location.&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-C#"&gt;public void Process()
+{
+	WriteLine($&amp;quot;Begin processing of {_filePath}&amp;quot;);
+
+	if (!File.Exists(_filePath))
+	{
+		WriteLine($&amp;quot;Error: {_filePath} does not exist.&amp;quot;);
+		return;
+	}
+
+	BackupOriginal();
+
+	var processingFilePath = MoveToProcessing();
+
+	if (string.IsNullOrEmpty(processingFilePath))
+	{
+		return;
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The MoveToProcessing method will create the processing directory if it does not already exist. It will check if the item already exists in the processing directory. If it does not already exist the file will be moved to the processing folder using the &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.file.move"&gt;&lt;strong&gt;Move&lt;/strong&gt;&lt;/a&gt; method. A simple operation that requires the path of an item and the desired path of the item.&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-C#"&gt;private string MoveToProcessing()
+{
+	Directory.CreateDirectory(Path.Combine(_rootPath, ProcessDir));
+
+	var processingFilePath = Path.Combine(_rootPath, ProcessDir, _fileName);
+
+	if (File.Exists(processingFilePath))
+	{
+		WriteLine($&amp;quot;Error: {processingFilePath} is already being processed.&amp;quot;);
+		return string.Empty;
+	}
+
+	WriteLine($&amp;quot;Moving {_filePath} to {processingFilePath}&amp;quot;);
+
+	// no way to overwrite if file already exists in new location
+	File.Move(_filePath, processingFilePath);
+
+	return processingFilePath;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id="process-file-remove-processing"&gt;Process File &amp;amp; Remove Processing&lt;/h2&gt;
+&lt;hr /&gt;
+&lt;p&gt;Now that the file has been backed up and moved to the correct location. It can now be processed. Below the &lt;strong&gt;ProcessFile&lt;/strong&gt; and &lt;strong&gt;RemoveProcessing&lt;/strong&gt; methods have been added to the &lt;strong&gt;Process&lt;/strong&gt; method.&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-C#"&gt;public void Process()
+{
+	WriteLine($&amp;quot;Begin processing of {_filePath}&amp;quot;);
+
+	if (!File.Exists(_filePath))
+	{
+		WriteLine($&amp;quot;Error: {_filePath} does not exist.&amp;quot;);
+		return;
+	}
+
+	BackupOriginal();
+
+	var processingFilePath = MoveToProcessing();
+
+	if (string.IsNullOrEmpty(processingFilePath))
+	{
+		return;
+	}
+
+	ProcessFile(processingFilePath);
+
+	RemoveProcessing(processingFilePath);
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The ProcessFile method just requires the processing file path. At this point, it will do a check on the extension of the file. Currently there is only txt file specific behaviour. It does this using the &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.path.getextension"&gt;&lt;strong&gt;GetExtension&lt;/strong&gt;&lt;/a&gt; method. You can see the anticipated return value in the switch statement. The &lt;strong&gt;ProcessTextFile&lt;/strong&gt; method does nothing but report that the file is being processed currently. Any modifications to this can be done another time, this post is about managing files, the editing files section will be handled elsewhere.&lt;/p&gt;
+&lt;p&gt;Once the file has finished being processed, it will create the final directory ready to place the processed file inside. A new file name will be computed using the &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.path.getfilenamewithoutextension"&gt;&lt;strong&gt;GetFileNameWithoutExtension&lt;/strong&gt;&lt;/a&gt; method alongside the &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system"&gt;&lt;strong&gt;System&lt;/strong&gt;&lt;/a&gt; &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.guid.newguid"&gt;&lt;strong&gt;NewGuid&lt;/strong&gt;&lt;/a&gt; method. The result of this would be a new unique file name (just incase a file needs to processed multiple times). The &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.path.changeextension"&gt;&lt;strong&gt;ChangeExtension&lt;/strong&gt;&lt;/a&gt; method is also an option to be used if preferred (maybe the .done extension could work).&lt;/p&gt;
+&lt;p&gt;Whichever naming method is used the processed file will then be moved to the &amp;quot;&lt;strong&gt;finished&lt;/strong&gt;&amp;quot; directory.&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-C#"&gt;private void ProcessFile(string processingFilePath)
+{
+	var extension = Path.GetExtension(_filePath);
+
+	switch (extension)
+	{
+		case &amp;quot;.txt&amp;quot;:
+			ProcessTextFile(processingFilePath);
+			break;
+		default:
+			WriteLine($&amp;quot;{extension} is not a supported file type.&amp;quot;);
+			break;
+	}
+
+	var finishedDir = Path.Combine(_rootPath, FinalDir);
+	Directory.CreateDirectory(finishedDir);
+
+	WriteLine($&amp;quot;Moving {processingFilePath} to {finishedDir}&amp;quot;);
+
+	var finishedFileName = $&amp;quot;{Path.GetFileNameWithoutExtension(_filePath)}-{Guid.NewGuid()}{extension}&amp;quot;;
+	var finishedPath = Path.Combine(finishedDir, finishedFileName);
+	File.Move(processingFilePath, finishedPath);
+}
+
+private void ProcessTextFile(string processingPath)
+{
+	// Insert Processing Logic
+	WriteLine($&amp;quot;Processing {processingPath}&amp;quot;);
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Once the processed file has been moved, there is no need for the &amp;quot;&lt;strong&gt;processed&lt;/strong&gt;&amp;quot; directory. Using the &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io.file.delete"&gt;&lt;strong&gt;Delete&lt;/strong&gt;&lt;/a&gt; method will remove everything inside the directory and then the directory itself.&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-C#"&gt;private void RemoveProcessing(string processingFilePath)
+{
+	var processingPath = Path.GetDirectoryName(processingFilePath);
+	if (!string.IsNullOrEmpty(processingPath))
+	{
+		Directory.Delete(processingPath, recursive:true);
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id="run-the-command"&gt;Run the command&lt;/h2&gt;
+&lt;hr /&gt;
+&lt;p&gt;Before the command is run, there is a need for data to process. Here is an example of some text files that was used. Files can be copied into the path directory to be processed.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://raw.githubusercontent.com/mainsy/cdn/master/posts/files-and-streams/test-data-files.png" class="img-fluid" alt="text files" /&gt;&lt;/p&gt;
+&lt;p&gt;Once there is a file to process, it can be referenced in the start options in the console project settings.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://raw.githubusercontent.com/mainsy/cdn/master/posts/files-and-streams/command-line-arguments-file.png" class="img-fluid" alt="command line arguments file" /&gt;&lt;/p&gt;
+&lt;p&gt;Starting the console app will trigger the file process. The output can be observed in the command line window.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://raw.githubusercontent.com/mainsy/cdn/master/posts/files-and-streams/command-line-file-output.png" class="img-fluid" alt="command line file output" /&gt;&lt;/p&gt;
+&lt;p&gt;Inside the path directory, now there will be 2 folders. 1 with the backed up text file and the other with the finished processed file.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://raw.githubusercontent.com/mainsy/cdn/master/posts/files-and-streams/folder-output.png" class="img-fluid" alt="folder output" /&gt;&lt;/p&gt;
+&lt;p&gt;As you can see, the file has been processed and has been changed to have the guid in file name.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://raw.githubusercontent.com/mainsy/cdn/master/posts/files-and-streams/file-output.png" class="img-fluid" alt="file output" /&gt;&lt;/p&gt;
+&lt;p&gt;Using the directory command will exhibit different behaviour. This can be noticed by changing the command line arguments to use the -d option. The file was removed from the path and the file type is also referenced. In preparation for this, I cleared the path directory and copied all of the files into the path directory.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://raw.githubusercontent.com/mainsy/cdn/master/posts/files-and-streams/command-line-arguments-directory.png" class="img-fluid" alt="command line arguments directory" /&gt;&lt;/p&gt;
+&lt;p&gt;Running the console app now will display more information, as all of the items get processed.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://raw.githubusercontent.com/mainsy/cdn/master/posts/files-and-streams/command-line-directory-output.png" class="img-fluid" alt="command line directory output" /&gt;&lt;/p&gt;
+&lt;p&gt;The result of this is all of the files being processed with new file names.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://raw.githubusercontent.com/mainsy/cdn/master/posts/files-and-streams/directory-output.png" class="img-fluid" alt="folder output" /&gt;&lt;/p&gt;
+&lt;h2 id="summary"&gt;Summary&lt;/h2&gt;
+&lt;hr /&gt;
+&lt;p&gt;The full code for this can be seen on my &lt;a href="https://github.com/mainsy"&gt;&lt;strong&gt;github&lt;/strong&gt;&lt;/a&gt;. In short I have put together a very basic example of how files and directories can be managed programmatically. The 2 set behaviours were to manage a single file or a collection of files. Both are easily achievable with the &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io"&gt;&lt;strong&gt;System.IO&lt;/strong&gt;&lt;/a&gt; namespace. The actual processing of these files will be witnessed in the parts to come.&lt;/p&gt;
+&lt;p&gt;In &lt;a href="/posts/files-and-streams-part-3-watching"&gt;&lt;strong&gt;Part 3&lt;/strong&gt;&lt;/a&gt; I'll expand on this by providing an example on how this can be monitored, rather than being executed on a case by case basis.&lt;/p&gt;
+&lt;p&gt;But for now.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://media.giphy.com/media/cuPm4p4pClZVC/giphy-downsized.gif" class="img-fluid" alt="tired cat" /&gt;&lt;/p&gt;
+&lt;p&gt;I'm done.&lt;/p&gt;
+</content:encoded>
+		</item>
+		<item>
+			<title>Files and Streams Part 1 - Overview</title>
+			<link>https://paulmains.com/posts/files-and-streams-part-1-overview</link>
+			<description>&lt;p&gt;In this deep dive, I'll be going into file operations within &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io"&gt;&lt;strong&gt;System.IO&lt;/strong&gt;&lt;/a&gt;. It's not a subject that I've ever spent a lot of time with. So hopefully I can shed some light on the matter, maybe I'll figure out some tricks along the way.&lt;/p&gt;</description>
+			<enclosure url="https://raw.githubusercontent.com/mainsy/cdn/master/posts/files-and-streams/file-banner.png" length="0" type="image" />
+			<guid>https://paulmains.com/posts/files-and-streams-part-1-overview</guid>
+			<pubDate>Sun, 19 Apr 2020 00:00:00 GMT</pubDate>
+			<content:encoded>&lt;p&gt;In this deep dive, I'll be going into file operations within &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.io"&gt;&lt;strong&gt;System.IO&lt;/strong&gt;&lt;/a&gt;. It's not a subject that I've ever spent a lot of time with. So hopefully I can shed some light on the matter, maybe I'll figure out some tricks along the way.&lt;/p&gt;
+&lt;p&gt;In the subsequent parts I go through the process of creating a console app for the purpose of processing files. What action that processing happens to be is up to the specific business requirement (I have none!).&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://media.giphy.com/media/c6W48VCLPF1l8Uu18A/giphy.gif" class="img-fluid" alt="files" /&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="/posts/files-and-streams-part-2-management"&gt;Part 2 - Managing Files &amp;amp; Directories&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="/posts/files-and-streams-part-3-watching"&gt;Part 3 - Watching Files &amp;amp; Directories&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="/posts/files-and-streams-part-4-memory"&gt;Part 4 - Reading &amp;amp; Writing Files into Memory&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;!-- - [Part 5 - ](/posts/files-and-streams-part-5-streams)
+- [Part 6 - ](/posts/files-and-streams-part-6-csv-files)
+- [Part 7 - ](/posts/files-and-streams-part-7-testing) --&gt;
+&lt;p&gt;Additional parts in progress.&lt;/p&gt;
+</content:encoded>
+		</item>
 		<item>
 			<title>Slide or Push your menus and add some effects with CSS3</title>
 			<link>https://paulmains.com/posts/slide-or-push-your-menu</link>

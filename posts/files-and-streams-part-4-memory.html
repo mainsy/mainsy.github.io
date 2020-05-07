@@ -1,0 +1,116 @@
+<!DOCTYPE html><html lang=en><head><title>Words by Paul - Files and Streams Part 4 - Reading &amp; Writing Files into Memory</title><meta charset=utf-8><meta name=viewport content="width=device-width, initial-scale=1"><link href=/assets/css/highlight.css rel=stylesheet><!--[if lte IE 8]><script src=/assets/js/ie/html5shiv.js></script><![endif]--><link rel=stylesheet href=/assets/css/main.css><!--[if lte IE 9]><link rel=stylesheet href=/assets/css/ie9.css><![endif]--> <!--[if lte IE 8]><link rel=stylesheet href=/assets/css/ie8.css><![endif]--><link href=/assets/css/override.css rel=stylesheet><link href=/assets/css/custom.css rel=stylesheet><meta name=description content="Hello, these are the words of a Full Stack Web Developer."><link type=application/rss+xml rel=alternate title="Words by Paul" href=/feed.rss><link type=application/atom+xml rel=alternate title="Words by Paul" href=/feed.atom><link rel="shortcut icon" href=/favicon.ico type=image/x-icon><link rel=icon href=/favicon.ico type=image/x-icon><meta name=application-name content="Words by Paul"><meta name=msapplication-tooltip content="Words by Paul"><meta name=msapplication-starturl content="/"><meta property=og:title content="Words by Paul - Files and Streams Part 4 - Reading &amp; Writing Files into Memory"><meta property=og:type content=website><meta property=og:url content=https://paulmains.com/posts/files-and-streams-part-4-memory><script src=/assets/js/highlight.pack.js></script><meta name=keywords content="Paul Mains,Web Developer,C#,Javascript,Full Stack,Back End,Front End,CSS,HTML"><script async src=https://kit.fontawesome.com/12b6ba9080.js crossorigin=anonymous></script><script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-W3JMRQ5');</script><body><noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-W3JMRQ5" height=0 width=0 style=display:none;visibility:hidden></iframe></noscript><div id=wrapper><header id=header><div class=inner><a href="/" class=logo> <span class=title>Words by Paul</span> </a> <a href=https://github.com/mainsy title="mainsy github" class=social-link><i class="social-link fab fa-github fa-lg"></i></a> <a href="https://www.instagram.com/paulmains/" title="paulmains instagram" class=social-link><i class="social-link fab fa-instagram fa-lg"></i></a> <a href=https://twitter.com/paulmains title="paulmains twitter" class=social-link><i class="social-link fab fa-twitter fa-lg"></i></a> <a href="https://www.linkedin.com/in/paulmains/" title="paulmains linkedin" class=social-link><i class="social-link fab fa-linkedin-in fa-lg"></i></a>  <nav><ul><li><a href=#menu>Menu</a></ul></nav></div></header><nav id=menu><h2>Menu</h2><ul><li><a href=/posts>Archive</a><li><a href=/tags>Tags</a><li><a href=/about>About Paul</a><li><a href=/deep-dives>Deep Dives</a></ul><a href=https://github.com/mainsy title="mainsy github" class=social-link-alt><i class="fab fa-github fa-2x"></i></a> <a href="https://www.instagram.com/paulmains/" title="paulmains instagram" class=social-link-alt><i class="fab fa-instagram fa-2x"></i></a> <a href=https://twitter.com/paulmains title="paulmains twitter" class=social-link-alt><i class="fab fa-twitter fa-2x"></i></a> <a href="https://www.linkedin.com/in/paulmains/" title="paulmains linkedin" class=social-link-alt><i class="fab fa-linkedin-in fa-2x"></i></a> </nav><div id=main><div class=inner><header><h1>Files and Streams Part 4 - Reading &amp; Writing Files into Memory</h1><p><em>Published on 22 April 2020</em><ul class="actions small"><li><a role=button href=/tags/C-Sharp class="button small">C Sharp</a><li><a role=button href=/tags/Console class="button small">Console</a><li><a role=button href=/tags/Deep-Dive class="button small">Deep Dive</a><li><a role=button href=/tags/File class="button small">File</a></ul></header><span class="image main"><img src=https://raw.githubusercontent.com/mainsy/cdn/master/posts/files-and-streams/file-banner.png alt="Hero image"></span><div id=content><p>In the previous part I looked at how file processing could benefit from watching directories. In this part I will be looking at introducing file manipulation during the processing. Here I work through processing various text and binary files.<h4 id=net-methods>.NET Methods</h4><ul><li><a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.file.readalltext>File.ReadAllText</a><li><a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.file.writealltext>File.WriteAllText</a><li><a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.file.readalllines>File.ReadAllLines</a><li><a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.file.writealllines>File.WriteAllLines</a><li><a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.file.appendalltext>File.AppendAllText</a><li><a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.file.appendalllines>File.AppendAllLines</a><li><a href=https://docs.microsoft.com/en-us/dotnet/api/system.io.file.move>File.Move</a></ul><p><img src=https://media.giphy.com/media/26BRL3pw98MWNOy0U/giphy.gif class=img-fluid alt="Let's do this"><h2 id=reading-writing-text-files>Reading &amp; Writing Text Files</h2><hr><p>Once the file has been picked up by the file watcher the file processing begins. In this scenario we have text files that need to have text appended to them. This can happen in a couple of different places. I've edited the solution in the following ways.<h3 id=reading-whole-files-into-memory>Reading Whole Files into Memory</h3><p>A new class called TextFileProcessor was added. Initially this will have some very basic processing. It will read all the text and append it with a signature. This uses the File.ReadAllText and File.WriteAllText methods. This will read the file at the defined location into memory. Once it's in memory the contents of the file can be modified. The new modified text then gets written to the new location. File processing has been completed at that point. The code below delivers on that behaviour.<pre><code class=language-C#>public class TextFileProcessor
+{
+	public string FilePath { get; set; }
+	public string NewFilePath { get; set; }
+	public string AppendText = $&quot;{Environment.NewLine}{Environment.NewLine}&quot; +
+				$&quot;Best regards,{Environment.NewLine}{Environment.NewLine}&quot; +
+				&quot;From Paul&quot;;
+
+	public TextFileProcessor(string filePath, string newFilePath)
+	{
+		FilePath = filePath;
+		NewFilePath = newFilePath;
+	}
+
+	public void Process()
+	{
+		var text = File.ReadAllText(FilePath);
+		var processedText = text + AppendText;
+		File.WriteAllText(NewFilePath, processedText);
+	}
+}
+</code></pre><p>In the FileProcessor there has been some modification. The ProcessTextFile Method has been removed. Then the ProcessFile Method has been modified to use the new TextFileProcessor. The file moving behaviour has been replaced with a deletion as the processing will be completely governed by the TextFileProcessor. The file name declarations have been moved up to the top of the method so that they can be used inside the switch statement.<pre><code class=language-C#>private void ProcessFile(string processingFilePath)
+{
+	var extension = Path.GetExtension(_filePath);
+	var finishedDir = Path.Combine(_rootPath, FinalDir);
+	Directory.CreateDirectory(finishedDir);
+
+	var finishedFileName = $&quot;{Path.GetFileNameWithoutExtension(_filePath)}-{Guid.NewGuid()}{extension}&quot;;
+	var finishedFilePath = Path.Combine(finishedDir, finishedFileName);
+
+	switch (extension)
+	{
+		case &quot;.txt&quot;:
+			var textProcessor = new TextFileProcessor(processingFilePath, finishedFilePath);
+			textProcessor.Process();
+			break;
+		default:
+			WriteLine($&quot;{DateTime.Now.ToLongTimeString()} - {extension} is not a supported file type.&quot;);
+			break;
+	}
+
+	WriteLine($&quot;{DateTime.Now.ToLongTimeString()} - {processingFilePath} has been processed.&quot;);
+	WriteLine($&quot;Removing {processingFilePath}&quot;);
+	File.Delete(processingFilePath);
+}
+</code></pre><p>The draw back to this approach is that it has a bigger memory footprint which can have consequences down the line. It is more efficient to read lines into memory rather than entire files.<h3 id=reading-lines-into-memory>Reading Lines into Memory</h3><p>To read lines into memory rather than the entire file we just need to use the File.ReadAllLines and File.WriteAllLines methods instead.<p>This is done in the TextFileProcessor. I changed the property being appended to a list of strings. The file gets read into memory line by line. Once we have the list the values get appended to the list. It then writes to the new location line by line.<pre><code class=language-C#>public class TextFileProcessor
+{
+	public string FilePath { get; set; }
+	public string NewFilePath { get; set; }
+	public List&lt;string&gt; AppendList = new List&lt;string&gt;
+	{
+		string.Empty,
+		string.Empty,
+		&quot;Best regards,&quot;,
+		string.Empty,
+		&quot;From Paul&quot;
+	};
+
+	public TextFileProcessor(string filePath, string newFilePath)
+	{
+		FilePath = filePath;
+		NewFilePath = newFilePath;
+	}
+
+	public void Process()
+	{
+		var lineList = File.ReadAllLines(FilePath).ToList();
+		lineList.AddRange(AppendList);
+		var lines = lineList.ToArray();
+		File.WriteAllLines(NewFilePath, lines);
+	}
+}
+</code></pre><p>The benefit of this approach is that the entire file isn't read into memory all at once. This helps us get around issues around file size issues. We don't have to have the entire file in memory all at once we can read and write it in segments. The one draw back of this is that at some point an additional line is added. This would need to be mitigated at some point.<h3 id=appending-text>Appending Text</h3><p>There's another more advisable way to append content and it's with the use of the File.AppendAllText and File.AppendAllLines methods. The below two examples would be able to replace the above Process method examples.<pre><code class=language-C#>File.Move(FilePath, NewFilePath);
+File.AppendAllText(NewFilePath, AppendText);
+</code></pre><pre><code class=language-C#>File.Move(FilePath, NewFilePath);
+File.AppendAllLines(NewFilePath, AppendList);
+</code></pre><h2 id=encoding>Encoding</h2><hr><p>All of the read and write methods have an encoding parameter option. This is a class with the following encoding options.<ul><li><a href=https://docs.microsoft.com/en-us/dotnet/api/system.text.encoding.ascii>ASCII</a><li><a href=https://docs.microsoft.com/en-us/dotnet/api/system.text.encoding.utf8>UTF8</a><li><a href=https://docs.microsoft.com/en-us/dotnet/api/system.text.encoding.utf7>UTF7</a><li><a href=https://docs.microsoft.com/en-us/dotnet/api/system.text.encoding.utf32>UTF32</a> (little endian)<li><a href=https://docs.microsoft.com/en-us/dotnet/api/system.text.encoding.unicode>Unicode</a> (UTF-16 little endian)<li><a href=https://docs.microsoft.com/en-us/dotnet/api/system.text.encoding.bigendianunicode>BigEndianUnicode</a> (UTF-16 big endian)</ul><p>The endianness referred here denotes whether the byter order is biggest or littlest first. Typically text files will be UTF8 which doesn't have a byte order mark. There are situations in which using different encodings is required. But in this I'm just using standard UTF-8 encoding.<p>ASCII is single byte character data (8 bit encoding) which is not affected by endianness. The bytes are stored in the same order always, so if you needed access to the third character in a string, you just need to access the third byte. ASCII only has 256 characters available to it with very few symbols.<p>Unicode is multi byte character data (7-32 bit encoding) which has various endianness. The first 128 character of unicode map to the first 128 characters of ASCII so in that regard they can be interchangeable. However due to the variety of encoding, characters aren't always read in the same way as ASCII. In UTF-8 for instance (which is the closest to ASCII), there are checks in place. If you needed to access the third character in a string, you first need to identify the first character to see if it is a one or a multi byte character (utf-8 characters can use between 1 and 4 bytes each). Then you need to do the same for the second character and then you are able to access the third character. So there are performance implications here to consider at scale. UTF-8 is capable of having 1,112,064 characters available to it. This is a concern mostly attributed to database schemas when deciding what types are needed.<p>Here is an <a href="https://kunststube.net/encoding/">article</a> I read for more background on this.<h2 id=reading-writing-binary-files>Reading &amp; Writing Binary Files</h2><hr><p>The reading and writing of text files will likely have more utility than writing binary in most basic cases. However on your computer there is more binary files than text, so there will be plenty of scenarios that entail having to read and write to a binary file.<p>But here is how you can do it in a basic rudimentary way. I added a new class called BinaryFileProcessor in the same way that TextFileProcessor was setup.<pre><code class=language-C#>public class BinaryFileProcessor
+{
+	public string FilePath { get; set; }
+	public string NewFilePath { get; set; }
+
+	public BinaryFileProcessor(string filePath, string newFilePath)
+	{
+		FilePath = filePath;
+		NewFilePath = newFilePath;
+	}
+
+	public void Process()
+	{
+		// binary process code will be here shortly
+	}
+}
+</code></pre><p>The ProcessFile method was modified in the FileProcessor class. The BinaryFileProcessor use was added to the switch statement.<pre><code class=language-C#>switch (extension)
+{
+	case &quot;.txt&quot;:
+		var textProcessor = new TextFileProcessor(processingFilePath, finishedFilePath);
+		textProcessor.Process();
+		break;
+	case &quot;.bin&quot;:
+		var binaryProcessor = new BinaryFileProcessor(processingFilePath, finishedFilePath);
+		binaryProcessor.Process();
+		break;
+	default:
+		WriteLine($&quot;{DateTime.Now.ToLongTimeString()} - {extension} is not a supported file type.&quot;);
+		break;
+}
+</code></pre><p>In the BinaryFileProcessor I added some code in the Process method to find largest byte and add that byte again at the end. Not exactly a real life use case, but let's just keep things simple. This works as an example for using the File.ReadAllBytes and File.WriteAllBytes methods.<pre><code class=language-C#>public void Process()
+{
+	var data = File.ReadAllBytes(FilePath);
+	var largest = data.Max();
+	var newData = new byte[data.Length + 1];
+	Array.Copy(data, newData, data.Length);
+	newData[newData.Length - 1] = largest;
+	File.WriteAllBytes(NewFilePath, newData);
+}
+</code></pre><h3 id=making-the-binary-file-to-process>Making the binary file to process</h3><p>A binary file isn't as straight forward to observe like a text file. You can open up a text file before and after in a text editor to see changes. For a binary file You can use Powershell to see these changes. The command that I used is <code>Format-Hex –Path “path”</code>.<p>But to edit the file to use as test data it's preferred to use a hex editor. I created a binary file by running this command <code>fsutil file createnew sasquatch.bin 5</code>. This creates a binary file with a data length of 5 bytes. This doesn't have any data in it really, it needs to modified. Now that I have a binary file I edited it using <a href=https://www.hhdsoftware.com/free-hex-editor>HHD Hex Editor Neo (free edition)</a>. I just entered random data into the file (I probably could have just created a new bin file through HHD Hex editor also).<p><img src=https://raw.githubusercontent.com/mainsy/cdn/master/posts/files-and-streams/hex-editor.png class=img-fluid alt="hex editor"><h3 id=running-the-process>Running the process</h3><p>The next step is to run the console application and drop the new bin file into the watched directory.<p><img src=https://raw.githubusercontent.com/mainsy/cdn/master/posts/files-and-streams/binary-processing.png class=img-fluid alt="command line"><p>Once that has been done the binary file can be opened up. It should be noticed that the largest byte has been appended to the end of the file.<p><img src=https://raw.githubusercontent.com/mainsy/cdn/master/posts/files-and-streams/binary-after.png class=img-fluid alt="powershell after"><p>Why someone might need to do this? Who knows? But it is a basic example of being able to programmatically alter binary files.<h2 id=summary>Summary</h2><hr><table class=table><thead><tr><th>Pros<th>Cons<tbody><tr><td>Simple logic<td>Slow processing<tr><td>Simple to write<td>Not scalable (will crash if file too large)<tr><td>Simple to maintain<td>No random access / seeking</table><p>In the next part I talk about streams or memory mapped files... I haven't decided yet.<p>Good night!<p><img src=https://media.giphy.com/media/mguPrVJAnEHIY/giphy.gif class=img-fluid alt="sleepy dog"></div></div></div><footer id=footer><div class=inner><section><h2>Feeds</h2><ul class="actions small vertical"><li><a href=/feed.rss class="button small"><i class="fa fa-rss"></i> RSS Feed</a><li><a href=/feed.atom class="button small"><i class="fa fa-rss"></i> Atom Feed</a></ul></section><section><a href=https://github.com/mainsy title="mainsy github" class=social-footer><i class="fab fa-github fa-2x"></i></a> <a href="https://www.instagram.com/paulmains/" title="paulmains instagram" class=social-footer><i class="fab fa-instagram fa-2x"></i></a> <a href=https://twitter.com/paulmains title="paulmains twitter" class=social-footer><i class="fab fa-twitter fa-2x"></i></a> <a href="https://www.linkedin.com/in/paulmains/" title="paulmains linkedin" class=social-footer><i class="fab fa-linkedin-in fa-2x"></i></a></section><ul class=copyright><li>Copyright © 2020 Paul Mains. All Rights Reserved<li>Design: <a href=http://html5up.net>HTML5 UP</a><li><a href=https://wyam.io>Generated by Wyam</a></ul></div></footer></div><script>hljs.initHighlightingOnLoad();</script><script src=https://code.jquery.com/jquery-3.5.0.slim.min.js integrity="sha256-MlusDLJIP1GRgLrOflUQtshyP0TwT/RHXsI1wWGnQhs=" crossorigin=anonymous></script><script src=/assets/js/skel.min.js></script><script src=/assets/js/util.js></script><!--[if lte IE 8]><script src=/assets/js/ie/respond.min.js></script><![endif]--><script src=/assets/js/main.js></script>
