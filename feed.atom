@@ -4,7 +4,7 @@
 	<title>Words by Paul</title>
 	<link rel="self" href="https://paulmains.com/" />
 	<rights>2020</rights>
-	<updated>2020-05-07T15:13:25Z</updated>
+	<updated>2020-05-07T16:05:30Z</updated>
 	<subtitle>Hello, these are the words of a Full Stack Web Developer.</subtitle>
 	<entry>
 		<id>https://paulmains.com/posts/files-and-streams-part-4-memory</id>
@@ -215,6 +215,7 @@ File.AppendAllLines(NewFilePath, AppendList);
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
+&lt;p&gt;Here we went through file manipulation techniques, expanding on previous parts. It's very simple to append text and binary. It's also good to have some degree of an understanding around encoding. It will save you in many situations.&lt;/p&gt;
 &lt;p&gt;In the next part I talk about streams or memory mapped files... I haven't decided yet.&lt;/p&gt;
 &lt;p&gt;Good night!&lt;/p&gt;
 &lt;p&gt;&lt;img src="https://media.giphy.com/media/mguPrVJAnEHIY/giphy.gif" class="img-fluid" alt="sleepy dog" /&gt;&lt;/p&gt;
@@ -646,7 +647,8 @@ public void Process()
 &lt;p&gt;&lt;img src="https://media.giphy.com/media/IgLnqEAUh3XP6dagEk/giphy-downsized.gif" class="img-fluid" alt="happy dog" /&gt;&lt;/p&gt;
 &lt;h2 id="summary"&gt;Summary&lt;/h2&gt;
 &lt;hr /&gt;
-&lt;p&gt;This post has gone through the process of changing the application produced in &lt;a href="/posts/files-and-streams-part-2-management"&gt;&lt;strong&gt;Part 2&lt;/strong&gt;&lt;/a&gt; into an application that watches a directory for changes. There was an attempt to use a &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.threading.timer"&gt;&lt;strong&gt;Timer&lt;/strong&gt;&lt;/a&gt; alongside a &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.collections.concurrent.concurrentdictionary-2"&gt;&lt;strong&gt;ConcurrentDictionary&lt;/strong&gt;&lt;/a&gt;, but that wasn't sufficient. It was then changed to use a &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.runtime.caching.memorycache"&gt;&lt;strong&gt;MemoryCache&lt;/strong&gt;&lt;/a&gt;. This may not be the conventional way to use the &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.runtime.caching.memorycache"&gt;&lt;strong&gt;MemoryCache&lt;/strong&gt;&lt;/a&gt;. But the expiration callback behaviour is useful in the current context. The code for this can be seen on my &lt;a href=""&gt;&lt;strong&gt;GitHub&lt;/strong&gt;&lt;/a&gt; (it is DataProcessor2).&lt;/p&gt;
+&lt;p&gt;This post has gone through the process of changing the application produced in &lt;a href="/posts/files-and-streams-part-2-management"&gt;&lt;strong&gt;Part 2&lt;/strong&gt;&lt;/a&gt; into an application that watches a directory for changes. There was an attempt to use a &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.threading.timer"&gt;&lt;strong&gt;Timer&lt;/strong&gt;&lt;/a&gt; alongside a &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.collections.concurrent.concurrentdictionary-2"&gt;&lt;strong&gt;ConcurrentDictionary&lt;/strong&gt;&lt;/a&gt;, but that wasn't sufficient. It was then changed to use a &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.runtime.caching.memorycache"&gt;&lt;strong&gt;MemoryCache&lt;/strong&gt;&lt;/a&gt;. This may not be the conventional way to use the &lt;a href="https://docs.microsoft.com/en-us/dotnet/api/system.runtime.caching.memorycache"&gt;&lt;strong&gt;MemoryCache&lt;/strong&gt;&lt;/a&gt;. But the expiration callback behaviour is useful in the current context.&lt;/p&gt;
+&lt;!-- The code for this can be seen on my [**GitHub**]() (it is DataProcessor2). --&gt;
 &lt;p&gt;In the next Part, I'll expand on &lt;a href="/posts/files-and-streams-part-4-memory"&gt;&lt;strong&gt;reading files into memory&lt;/strong&gt;&lt;/a&gt;, as it will be quite useful if the file processing actually did something with the files.&lt;/p&gt;
 &lt;p&gt;But for now.&lt;/p&gt;
 &lt;p&gt;&lt;img src="https://media.giphy.com/media/4YFcrXwpjeMWk/giphy-downsized.gif" class="img-fluid" alt="tired dog" /&gt;&lt;/p&gt;
